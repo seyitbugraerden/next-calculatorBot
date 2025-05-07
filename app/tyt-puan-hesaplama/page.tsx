@@ -10,6 +10,8 @@ import {
   AlertDialogFooter,
   AlertDialogAction,
 } from "@/components/ui/alert-dialog";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 type Inputs = {
   turkce_dogru: string;
@@ -49,6 +51,43 @@ export default function TytHesaplayici() {
       fen: number;
     };
   } | null>(null);
+
+  const downloadPDF = () => {
+    if (!results) return;
+
+    const doc = new jsPDF();
+
+    doc.setFontSize(16);
+    doc.text("TYT Puan Hesaplama Sonuçlari (2025)", 14, 20);
+
+    doc.setFontSize(12);
+    doc.text(`Ham TYT Puani: ${results.ham.toFixed(5)}`, 14, 30);
+    doc.text(
+      `Yerlestirme TYT Puani: ${results.yerlestirme.toFixed(5)}`,
+      14,
+      38
+    );
+
+    const netEntries = Object.entries(results.netler).map(([ders, net]) => [
+      ders.charAt(0).toUpperCase() + ders.slice(1),
+      net.toFixed(2),
+    ]);
+
+    const totalNet = netEntries.reduce(
+      (acc, [, net]) => acc + parseFloat(net),
+      0
+    );
+
+    netEntries.push(["Toplam Net", totalNet.toFixed(2)]);
+
+    autoTable(doc, {
+      startY: 50,
+      head: [["Ders", "Net"]],
+      body: netEntries,
+    });
+
+    doc.save("tyt-sonuc.pdf");
+  };
 
   const toNumber = (val: any) =>
     parseFloat(String(val).replace(",", ".") || "0");
@@ -219,9 +258,17 @@ export default function TytHesaplayici() {
 
       {results && error === "" && (
         <div className="bg-white shadow-md border border-gray-200 rounded-xl p-6 mt-6 space-y-4">
-          <h2 className="text-xl font-semibold text-gray-800 border-b pb-2">
-            Hesaplama Sonuçları
-          </h2>
+          <div className="flex flex-row justify-between items-center">
+            <h2 className="text-xl font-semibold text-gray-800 border-b pb-2">
+              Hesaplama Sonuçları
+            </h2>
+            <button
+              onClick={downloadPDF}
+              className="text-xl font-semibold text-gray-800 border-b pb-2"
+            >
+              PDF Olarak İndir
+            </button>
+          </div>
           <div className="flex flex-col gap-2 text-lg text-gray-700">
             <div className="flex justify-between">
               <span className="font-medium text-gray-600">Ham TYT Puanı:</span>
