@@ -11,7 +11,7 @@ import {
   AlertDialogAction,
 } from "@/components/ui/alert-dialog";
 
-const BASE = 196.6175;
+const BASE = 196.617;
 const COEFFICIENTS = {
   turkce: 4.1075,
   inkilap: 1.7293,
@@ -209,7 +209,10 @@ export default function LgsHesaplayici() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogAction onClick={() => setIsAlertOpen(false)} className="cursor-pointer">
+            <AlertDialogAction
+              onClick={() => setIsAlertOpen(false)}
+              className="cursor-pointer"
+            >
               Tamam
             </AlertDialogAction>
           </AlertDialogFooter>

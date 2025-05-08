@@ -36,7 +36,7 @@ export default function TytHesaplayici() {
       matematik_yanlis: "0",
       fen_dogru: "0",
       fen_yanlis: "0",
-      diploma_notu: "0",
+      diploma_notu: "60",
     },
   });
   const [error, setError] = useState("");
@@ -71,7 +71,7 @@ export default function TytHesaplayici() {
     fen: number;
   }) => {
     const ham =
-      144.945 +
+      144.98 +
       2.908 * turkce +
       2.937 * sosyal +
       2.925 * matematik +
