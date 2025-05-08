@@ -52,43 +52,6 @@ export default function TytHesaplayici() {
     };
   } | null>(null);
 
-  const downloadPDF = () => {
-    if (!results) return;
-
-    const doc = new jsPDF();
-
-    doc.setFontSize(16);
-    doc.text("TYT Puan Hesaplama Sonuçlari (2025)", 14, 20);
-
-    doc.setFontSize(12);
-    doc.text(`Ham TYT Puani: ${results.ham.toFixed(5)}`, 14, 30);
-    doc.text(
-      `Yerlestirme TYT Puani: ${results.yerlestirme.toFixed(5)}`,
-      14,
-      38
-    );
-
-    const netEntries = Object.entries(results.netler).map(([ders, net]) => [
-      ders.charAt(0).toUpperCase() + ders.slice(1),
-      net.toFixed(2),
-    ]);
-
-    const totalNet = netEntries.reduce(
-      (acc, [, net]) => acc + parseFloat(net),
-      0
-    );
-
-    netEntries.push(["Toplam Net", totalNet.toFixed(2)]);
-
-    autoTable(doc, {
-      startY: 50,
-      head: [["Ders", "Net"]],
-      body: netEntries,
-    });
-
-    doc.save("tyt-sonuc.pdf");
-  };
-
   const toNumber = (val: any) =>
     parseFloat(String(val).replace(",", ".") || "0");
   const clamp = (value: number, max: number) =>
@@ -120,16 +83,35 @@ export default function TytHesaplayici() {
     clamp(dogru + yanlis, max) === dogru + yanlis;
 
   const onSubmit: SubmitHandler<Inputs> = (data) => {
-    const inputPairs = [
-      { d: data.turkce_dogru, y: data.turkce_yanlis, max: 40, name: "Türkçe" },
-      { d: data.sosyal_dogru, y: data.sosyal_yanlis, max: 20, name: "Sosyal" },
+    const dersler = [
       {
+        key: "turkce",
+        name: "Türkçe",
+        d: data.turkce_dogru,
+        y: data.turkce_yanlis,
+        max: 40,
+      },
+      {
+        key: "sosyal",
+        name: "Sosyal",
+        d: data.sosyal_dogru,
+        y: data.sosyal_yanlis,
+        max: 20,
+      },
+      {
+        key: "matematik",
+        name: "Matematik",
         d: data.matematik_dogru,
         y: data.matematik_yanlis,
         max: 40,
-        name: "Matematik",
       },
-      { d: data.fen_dogru, y: data.fen_yanlis, max: 20, name: "Fen" },
+      {
+        key: "fen",
+        name: "Fen",
+        d: data.fen_dogru,
+        y: data.fen_yanlis,
+        max: 20,
+      },
     ];
 
     if (Object.values(data).every((val) => toNumber(val) === 0)) {
@@ -138,7 +120,7 @@ export default function TytHesaplayici() {
       return;
     }
 
-    for (const { d, y, max, name } of inputPairs) {
+    for (const { d, y, max, name } of dersler) {
       if (!validateMax(toNumber(d), toNumber(y), max)) {
         setError(
           `${name} alanında doğru ve yanlış toplamı en fazla ${max} olabilir.`
@@ -148,97 +130,66 @@ export default function TytHesaplayici() {
       }
     }
 
-    setError("");
-
-    const turkceNet = calculateNet(
-      clamp(toNumber(data.turkce_dogru), 40),
-      clamp(toNumber(data.turkce_yanlis), 40)
-    );
-    const sosyalNet = calculateNet(
-      clamp(toNumber(data.sosyal_dogru), 20),
-      clamp(toNumber(data.sosyal_yanlis), 20)
-    );
-    const matematikNet = calculateNet(
-      clamp(toNumber(data.matematik_dogru), 40),
-      clamp(toNumber(data.matematik_yanlis), 40)
-    );
-    const fenNet = calculateNet(
-      clamp(toNumber(data.fen_dogru), 20),
-      clamp(toNumber(data.fen_yanlis), 20)
-    );
+    const netler = {
+      turkce: calculateNet(
+        toNumber(data.turkce_dogru),
+        toNumber(data.turkce_yanlis)
+      ),
+      sosyal: calculateNet(
+        toNumber(data.sosyal_dogru),
+        toNumber(data.sosyal_yanlis)
+      ),
+      matematik: calculateNet(
+        toNumber(data.matematik_dogru),
+        toNumber(data.matematik_yanlis)
+      ),
+      fen: calculateNet(toNumber(data.fen_dogru), toNumber(data.fen_yanlis)),
+    };
     const obp = clamp(toNumber(data.diploma_notu), 100);
-
-    const ham = getCalibratedTytScore({
-      turkce: turkceNet,
-      sosyal: sosyalNet,
-      matematik: matematikNet,
-      fen: fenNet,
-    });
-    const obpKatkisi = obp * 5 * 0.12;
-    const yerlestirme = ham + obpKatkisi;
+    const ham = getCalibratedTytScore(netler);
+    const yerlestirme = ham + obp * 5 * 0.12;
 
     setResults({
       ham,
       yerlestirme: parseFloat(yerlestirme.toFixed(5)),
-      netler: {
-        turkce: turkceNet,
-        sosyal: sosyalNet,
-        matematik: matematikNet,
-        fen: fenNet,
-      },
+      netler,
     });
+    setIsAlertOpen(true);
   };
 
   return (
-    <div className="max-w-xl mx-auto h-screen my-auto p-4 space-y-6">
-      <h1 className="text-2xl font-bold">
+    <div className="max-w-xl mx-auto p-6 space-y-6">
+      <h1 className="text-2xl font-bold text-center">
         TYT Puan Hesaplayıcı (2024 Kalibrasyonlu)
       </h1>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        {[
-          {
-            label: "Türkçe",
-            d: "turkce_dogru",
-            y: "turkce_yanlis",
-            m: 40,
-          },
-          {
-            label: "Sosyal Bilimler",
-            d: "sosyal_dogru",
-            y: "sosyal_yanlis",
-            m: 20,
-          },
-          {
-            label: "Temel Matematik",
-            d: "matematik_dogru",
-            y: "matematik_yanlis",
-            m: 40,
-          },
-          {
-            label: "Fen Bilimleri",
-            d: "fen_dogru",
-            y: "fen_yanlis",
-            m: 20,
-          },
-        ].map(({ label, d, y, m }) => (
-          <div className="flex gap-4 items-center" key={label}>
-            <span className="w-32">{label}</span>
-            <input
-              type="number"
-              inputMode="decimal"
-              {...register(d as keyof Inputs)}
-              className="border px-2 py-1 w-20"
-            />{" "}
-            -
-            <input
-              type="number"
-              inputMode="decimal"
-              {...register(y as keyof Inputs)}
-              className="border px-2 py-1 w-20"
-            />
-            <span>{m} Soru</span>
-          </div>
-        ))}
+        {["Türkçe", "Sosyal Bilimler", "Temel Matematik", "Fen Bilimleri"].map(
+          (label, idx) => {
+            const key = ["turkce", "sosyal", "matematik", "fen"][idx];
+            const d = `${key}_dogru`;
+            const y = `${key}_yanlis`;
+            const m = key === "sosyal" || key === "fen" ? 20 : 40;
+            return (
+              <div className="flex gap-4 items-center" key={label}>
+                <span className="w-32">{label}</span>
+                <input
+                  type="number"
+                  inputMode="decimal"
+                  {...register(d as keyof Inputs)}
+                  className="border px-2 py-1 w-20"
+                />
+                -
+                <input
+                  type="number"
+                  inputMode="decimal"
+                  {...register(y as keyof Inputs)}
+                  className="border px-2 py-1 w-20"
+                />
+                <span>{m} Soru</span>
+              </div>
+            );
+          }
+        )}
         <div className="flex items-center gap-4">
           <span className="w-32">Diploma Notu</span>
           <input
@@ -256,64 +207,53 @@ export default function TytHesaplayici() {
         </button>
       </form>
 
-      {results && error === "" && (
-        <div className="bg-white shadow-md border border-gray-200 rounded-xl p-6 mt-6 space-y-4">
-          <div className="flex flex-row justify-between items-center">
-            <h2 className="text-xl font-semibold text-gray-800 border-b pb-2">
-              Hesaplama Sonuçları
-            </h2>
-            <button
-              onClick={downloadPDF}
-              className="text-xl font-semibold text-gray-800 border-b pb-2"
-            >
-              PDF Olarak İndir
-            </button>
-          </div>
-          <div className="flex flex-col gap-2 text-lg text-gray-700">
-            <div className="flex justify-between">
-              <span className="font-medium text-gray-600">Ham TYT Puanı:</span>
-              <span className="font-bold text-blue-700 text-xl">
-                {results.ham.toFixed(5)}
-              </span>
-            </div>
-            <div className="flex justify-between">
-              <span className="font-medium text-gray-600">
-                Yerleştirme TYT Puanı:
-              </span>
-              <span className="font-bold text-green-700 text-xl">
-                {results.yerlestirme.toFixed(5)}
-              </span>
-            </div>
-          </div>
-          <table className="mt-4 w-full text-center border-collapse">
-            <thead>
-              <tr className="bg-gray-200">
-                <th className="border p-2">Ders</th>
-                <th className="border p-2">Net</th>
-              </tr>
-            </thead>
-            <tbody>
-              {Object.entries(results.netler).map(([key, value]) => (
-                <tr key={key}>
-                  <td className="border p-2 capitalize">{key}</td>
-                  <td className="border p-2">{value.toFixed(2)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-
       <AlertDialog open={isAlertOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Uyarı</AlertDialogTitle>
-            <AlertDialogDescription>{error}</AlertDialogDescription>
+            <AlertDialogTitle>
+              {error ? "Uyarı" : "Hesaplama Sonuçları"}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {error ? (
+                error
+              ) : results ? (
+                <div className="space-y-3">
+                  <div className="flex justify-between">
+                    <span>Ham TYT Puanı:</span>
+                    <span className="font-bold text-blue-700">
+                      {results.ham}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Yerleştirme TYT Puanı:</span>
+                    <span className="font-bold text-green-700">
+                      {results.yerlestirme}
+                    </span>
+                  </div>
+                  <table className="mt-4 w-full text-center border">
+                    <thead className="bg-gray-100">
+                      <tr>
+                        <th className="border px-2 py-1">Ders</th>
+                        <th className="border px-2 py-1">Net</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {Object.entries(results.netler).map(([k, v]) => (
+                        <tr key={k}>
+                          <td className="border px-2 py-1 capitalize">{k}</td>
+                          <td className="border px-2 py-1">{v.toFixed(2)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : null}
+            </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogAction
-              className="cursor-pointer"
               onClick={() => setIsAlertOpen(false)}
+              className="cursor-pointer"
             >
               Tamam
             </AlertDialogAction>
