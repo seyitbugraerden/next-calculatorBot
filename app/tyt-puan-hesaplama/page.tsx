@@ -121,7 +121,7 @@ export default function TytHesaplayici() {
     }
 
     for (const { d, y, max, name } of dersler) {
-      if (!validateMax(toNumber(d), toNumber(y), max)) {
+      if (!validateMax(toNumber(d), toNumber(y), max + 1)) {
         setError(
           `${name} alanında doğru ve yanlış toplamı en fazla ${max} olabilir.`
         );
