@@ -171,24 +171,24 @@ export default function TytHesaplayici() {
     );
   };
 
-  const getDilScore = (tytPuan: number, dilNet: number): number => {
-    console.log("dilNet", dilNet);
-    return parseFloat(
-      (0.38051 * tytPuan + 2.60942 * dilNet + 78.96082).toFixed(5)
-    );
+  const getDilScore = (tytHam: number, dilNet: number) => {
+    return parseFloat((tytHam * 0.6029 + dilNet * 2.6094).toFixed(5));
   };
 
   const getEAScore = (
     tytPuan: number,
     aytMatNet: number,
-    edebiyatNet: number
+    edebiyatNet: number,
+    tarih1Net: number,
+    cografya1Net: number
   ): number => {
     return parseFloat(
       (
-        0.39159 * tytPuan +
+        0.69701 * tytPuan +
         3.28219 * aytMatNet +
-        2.83178 * edebiyatNet +
-        75.52294
+        0.03042 * edebiyatNet +
+        2.37709 * tarih1Net +
+        2.53653 * cografya1Net
       ).toFixed(5)
     );
   };
@@ -317,16 +317,6 @@ export default function TytHesaplayici() {
       return;
     }
 
-    for (const { d, y, max, name } of dersler) {
-      if (!validateMax(toNumber(d), toNumber(y), max + 1)) {
-        setError(
-          `${name} alanında doğru ve yanlış toplamı en fazla ${max} olabilir.`
-        );
-        setIsAlertOpen(true);
-        return;
-      }
-    }
-
     const netler = {
       turkce: calculateNet(
         toNumber(data.turkce_dogru),
@@ -426,7 +416,7 @@ export default function TytHesaplayici() {
 
     const dil = getDilScore(ham, yabanciNet);
 
-    const ea = getEAScore(ham, matNet, edebiyatNet);
+    const ea = getEAScore(ham, matNet, edebiyatNet, tarih1Net, cografyaNet);
 
     const obp = clamp(toNumber(data.diploma_notu), 100);
     const yerlestirme = ham + obp * 5 * 0.12;
