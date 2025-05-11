@@ -172,7 +172,9 @@ export default function TytHesaplayici() {
   };
 
   const getDilScore = (tytHam: number, dilNet: number) => {
-    return parseFloat((tytHam * 0.6029 + dilNet * 2.6094).toFixed(5));
+    return parseFloat(
+      (tytHam * 0.51415 + dilNet * 2.60942 + 36.05689).toFixed(5)
+    );
   };
 
   const getEAScore = (
@@ -182,15 +184,15 @@ export default function TytHesaplayici() {
     tarih1Net: number,
     cografya1Net: number
   ): number => {
-    return parseFloat(
-      (
-        0.69701 * tytPuan +
-        3.28219 * aytMatNet +
-        0.03042 * edebiyatNet +
-        2.37709 * tarih1Net +
-        2.53653 * cografya1Net
-      ).toFixed(5)
-    );
+    const score =
+      0.39159 * tytPuan + // TYT katkısı
+      3.28219 * aytMatNet + // AYT Matematik
+      2.83178 * edebiyatNet + // Türk Dili ve Edebiyatı
+      2.37709 * tarih1Net + // Tarih-1
+      2.53652 * cografya1Net + // Coğrafya-1
+      75.52396; // Sabit katkı
+
+    return Math.min(500, parseFloat(score.toFixed(5)));
   };
 
   const validateMax = (dogru: number, yanlis: number, max: number) =>

@@ -4,7 +4,7 @@
 @custom-variant dark (&:is(.dark *));
 
 input {
-  @apply border border-black/70;
+  @apply border border-white/70;
 }
 input:active {
   outline: none;
@@ -142,4 +142,8 @@ input[type="number"]::-webkit-inner-spin-button {
   body {
     @apply bg-background text-foreground;
   }
+}
+
+body{
+  @apply bg-gray-600 text-white
 }
