@@ -143,7 +143,3 @@ input[type="number"]::-webkit-inner-spin-button {
     @apply bg-background text-foreground;
   }
 }
-
-body{
-  @apply bg-gray-600 text-white
-}
