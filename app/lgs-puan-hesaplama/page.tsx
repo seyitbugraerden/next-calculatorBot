@@ -1,6 +1,7 @@
 "use client";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useState } from "react";
+import Spline from "cubic-spline";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -19,6 +20,51 @@ const COEFFICIENTS = {
   yabanci: 1.5308,
   matematik: 4.6325,
   fen: 3.89,
+};
+
+const PUAN_SIRA = [
+  [196.6174, 887559],
+  [210.9958, 810608],
+  [214.8858, 788467],
+  [237.2207, 661077],
+  [241.334, 638439],
+  [243.6234, 626027],
+  [254.9289, 567148],
+  [271.6723, 488708],
+  [292.0985, 407290],
+  [302.0105, 372836],
+  [308.0536, 353177],
+  [327.7163, 295092],
+  [337.8649, 267886],
+  [358.0546, 217744],
+  [391.3255, 144666],
+  [396.2414, 134837],
+  [405.1304, 117659],
+  [412.1421, 104652],
+  [419.674, 91149],
+  [478.2454, 9135],
+  [488.6003, 2681],
+  [500.0, 1],
+];
+
+const x = PUAN_SIRA.map(([puan]) => puan);
+const y = PUAN_SIRA.map(([, sira]) => sira);
+const spline = new Spline(x, y);
+
+const getSiralamaFromPuan = (puan: number): number => {
+  const minPuan = x[0];
+  const maxPuan = x[x.length - 1];
+
+  if (puan >= maxPuan) return 1;
+  if (puan <= minPuan) return 887559;
+
+  return Math.round(spline.at(puan));
+};
+
+const getYuzdelikFromSira = (sira: number): string => {
+  const toplam = 992_906;
+  const yuzde = (sira / toplam) * 100;
+  return `%${yuzde.toFixed(2)}`;
 };
 
 type Inputs = {
@@ -57,6 +103,7 @@ export default function LgsHesaplayici() {
   const [error, setError] = useState("");
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [lgsPuan, setLgsPuan] = useState<number | null>(null);
+  const [sira, setSira] = useState<number | null>(null);
   const [netler, setNetler] = useState<Record<string, number> | null>(null);
 
   const toNumber = (val: any) =>
@@ -126,30 +173,29 @@ export default function LgsHesaplayici() {
       puan += calculated[key] * COEFFICIENTS[key as keyof typeof COEFFICIENTS];
     }
 
+    const tahminiSira = getSiralamaFromPuan(puan);
+
     setNetler(calculated);
     setLgsPuan(parseFloat(puan.toFixed(4)));
+    setSira(tahminiSira);
     setError("");
     setIsAlertOpen(true);
   };
 
   return (
     <div className="max-w-xl mx-auto p-6 space-y-6">
-      <h1 className="text-2xl font-bold text-center">
-        LGS Puan Hesaplayıcı (Dialog Göstergeli)
-      </h1>
+      <h1 className="text-2xl font-bold text-center">LGS Puan Hesaplayıcı</h1>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         {["turkce", "inkilap", "din", "yabanci", "matematik", "fen"].map(
           (label) => {
-            const key = label.toLowerCase();
-            const d = key + "_dogru";
-            const y = key + "_yanlis";
-            const m =
-              label === "turkce" || label === "matematik" || label === "fen"
-                ? 20
-                : 10;
+            const d = label + "_dogru";
+            const y = label + "_yanlis";
+            const max = ["turkce", "matematik", "fen"].includes(label)
+              ? 20
+              : 10;
             return (
               <div className="flex gap-4 items-center" key={label}>
-                <span className="w-32">{label}</span>
+                <span className="w-32 capitalize">{label}</span>
                 <input
                   type="number"
                   {...register(d as keyof Inputs)}
@@ -161,7 +207,7 @@ export default function LgsHesaplayici() {
                   {...register(y as keyof Inputs)}
                   className="border px-2 py-1 w-20"
                 />
-                <span>{m} Soru</span>
+                <span>{max} Soru</span>
               </div>
             );
           }
@@ -186,6 +232,18 @@ export default function LgsHesaplayici() {
                   <p className="text-lg">
                     <strong>LGS Puanı:</strong>{" "}
                     <span className="text-green-700 font-bold">{lgsPuan}</span>
+                  </p>
+                  <p className="text-lg">
+                    <strong>Tahmini Sıralama:</strong>{" "}
+                    <span className="text-blue-700 font-bold">
+                      {sira?.toLocaleString("tr-TR")}
+                    </span>
+                  </p>
+                  <p className="text-lg">
+                    <strong>Yüzdelik Dilim:</strong>{" "}
+                    <span className="text-blue-700 font-bold">
+                      {sira && getYuzdelikFromSira(sira)}
+                    </span>
                   </p>
                   <table className="w-full text-center border">
                     <thead className="bg-gray-100">
