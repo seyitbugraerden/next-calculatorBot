@@ -8,12 +8,16 @@ import {
   sayPuanlar,
   saySiralamalar,
   siralamalar,
+  sozPuanlar,
+  sozSiralamalar,
   yDilPuanlar,
   yDilSiralamalar,
   yEaPuanlar,
   yEaSiralamalar,
   ySayPuanlar,
   ySaySiralamalar,
+  ySozPuanlar,
+  ySozSiralamalar,
   ytytPuanlar,
   ytytSiralamalar,
 } from "@/lib/spline-mock";
@@ -29,6 +33,8 @@ export const splineSayYerlestirme = new CubicSpline(
 );
 const splineEa = new CubicSpline(eaPuanlar, eaSiralamalar);
 const splineYEa = new CubicSpline(yEaPuanlar, yEaSiralamalar);
+const sozSpline = new CubicSpline(sozPuanlar, sozSiralamalar);
+const ySozSpline = new CubicSpline(ySozPuanlar, ySozSiralamalar);
 
 export function getHamSiralama(puan: number): number {
   if (puan < puanlar[0]) return 2755277;
@@ -119,9 +125,62 @@ export const getSozelScore = (
     3.131 * dinNet +
     68.9585;
 
-  return parseFloat(puan.toFixed(5));
+  return parseFloat(Math.min(puan, 500).toFixed(5));
 };
 
+export const getSozelYerlestirmeScore = (
+  tytPuan: number,
+  edebiyatNet: number,
+  tarih1Net: number,
+  cografya1Net: number,
+  tarih2Net: number,
+  cografya2Net: number,
+  felsefeNet: number,
+  dinNet: number,
+  obp: number
+): number => {
+  // Ham SÖZ puanı (obp hariç)
+  const hamPuan = Math.min(
+    0.4236 * tytPuan +
+      3.0633 * edebiyatNet +
+      2.5715 * tarih1Net +
+      2.7439 * cografya1Net +
+      3.16 * tarih2Net +
+      2.8204 * cografya2Net +
+      3.8504 * felsefeNet +
+      3.131 * dinNet +
+      68.9585,
+    500
+  );
+
+  // Yerleştirme puanı
+  const yerlestirmePuan = hamPuan + Math.min(obp, 100) * 0.6;
+
+  return parseFloat(Math.min(yerlestirmePuan, 560).toFixed(5));
+};
+
+export function getSozelSiralama(puan: number): number {
+  const minPuan = sozPuanlar[0];
+  const maxPuan = 500;
+  const maxSiralama = 1_423_849;
+
+  if (puan <= minPuan) return maxSiralama;
+  if (puan >= maxPuan) return 1;
+
+  const result = sozSpline.at(puan);
+  return Number.isFinite(result) ? Math.round(result) : maxSiralama;
+}
+export function getYSozelSiralama(puan: number): number {
+  const minPuan = ySozPuanlar[0];
+  const maxPuan = 560;
+  const maxSiralama = 1_423_849;
+
+  if (puan <= minPuan) return maxSiralama;
+  if (puan >= maxPuan) return 1;
+
+  const result = ySozSpline.at(puan);
+  return Number.isFinite(result) ? Math.round(result) : maxSiralama;
+}
 // Sayısal Hesapları
 
 export const getSayisalScore = (

@@ -25,9 +25,12 @@ import {
   getSayisalYerlestirmeScore,
   getSaySiralama,
   getSozelScore,
+  getSozelSiralama,
+  getSozelYerlestirmeScore,
   getYDilSiralama,
   getYEaSiralama,
   getYSaySiralama,
+  getYSozelSiralama,
   getYtytSiralama,
   splineSayHam,
   splineSayYerlestirme,
@@ -90,6 +93,9 @@ export default function TytHesaplayici() {
     };
     dil: number;
     sozel: number;
+    sozelYerlestirme: number;
+    sozelSiralama: number;
+    sozelYerlestirmeSiralama: number;
     sayisal: number;
     sayisalYerlestirme: number;
     getSaySiralamaValue: number;
@@ -180,17 +186,6 @@ export default function TytHesaplayici() {
       toNumber(data.biyoloji_yanlis)
     );
 
-    const sozel = getSozelScore(
-      ham,
-      edebiyatNet,
-      tarih1Net,
-      cografyaNet,
-      tarih2Net,
-      cografya2Net,
-      felsefeNet,
-      dinNet
-    );
-
     const obp = clamp(toNumber(data.diploma_notu), 100);
     const yerlestirme = ham + obp * 5 * 0.12;
     const siralamaHam = getHamSiralama(ham);
@@ -238,6 +233,31 @@ export default function TytHesaplayici() {
     const getEASiralamaValue = getEaSiralama(ea);
     const getYEASiralamaValue = getYEaSiralama(eaYerlestirme);
 
+    //Sözel Hesapları
+    const sozel = getSozelScore(
+      ham,
+      edebiyatNet,
+      tarih1Net,
+      cografyaNet,
+      tarih2Net,
+      cografya2Net,
+      felsefeNet,
+      dinNet
+    );
+    const sozelYerlestirme = getSozelYerlestirmeScore(
+      ham,
+      edebiyatNet,
+      tarih1Net,
+      cografyaNet,
+      tarih2Net,
+      cografya2Net,
+      felsefeNet,
+      dinNet,
+      obp
+    );
+    const sozelSiralama = getSozelSiralama(sozel);
+    const sozelYerlestirmeSiralama = getYSozelSiralama(sozelYerlestirme);
+
     setResults({
       ham,
       yerlestirme: parseFloat(yerlestirme.toFixed(5)),
@@ -245,6 +265,9 @@ export default function TytHesaplayici() {
       dil,
       dilYerlestirme,
       sozel,
+      sozelYerlestirme,
+      sozelSiralama,
+      sozelYerlestirmeSiralama,
       sayisal,
       sayisalYerlestirme,
       getSaySiralamaValue,
@@ -372,8 +395,11 @@ export default function TytHesaplayici() {
                       {results.siralamaYerlestirme.toLocaleString("tr-TR")}
                     </span>
                   </div>
-                  SÖZ : {results.sozel} <br />
+                  SÖZ : {results.sozel} || {results.sozelSiralama}
                   <br />
+                  YSÖZ : {results.sozelYerlestirme} ||{" "}
+                  {results.sozelYerlestirmeSiralama}
+                  <br /> <br />
                   SAY : {results.sayisal} || {results.getSaySiralamaValue}
                   <br />
                   YSAY : {results.sayisalYerlestirme} ||{" "}
