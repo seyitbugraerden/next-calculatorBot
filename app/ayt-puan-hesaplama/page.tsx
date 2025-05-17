@@ -10,42 +10,30 @@ import {
   AlertDialogFooter,
   AlertDialogAction,
 } from "@/components/ui/alert-dialog";
+import {
+  calculateNet,
+  clamp,
+  getCalibratedTytScore,
+  getDilScore,
+  getDilSiralama,
+  getDilYerlestirmeScore,
+  getEAScore,
+  getEaSiralama,
+  getEAYerlestirmeScore,
+  getHamSiralama,
+  getSayisalScore,
+  getSayisalYerlestirmeScore,
+  getSaySiralama,
+  getSozelScore,
+  getYDilSiralama,
+  getYEaSiralama,
+  getYSaySiralama,
+  getYtytSiralama,
+  splineSayHam,
+  splineSayYerlestirme,
+  toNumber,
+} from "../action";
 
-type Inputs = {
-  turkce_dogru: string;
-  turkce_yanlis: string;
-  sosyal_dogru: string;
-  sosyal_yanlis: string;
-  matematik_dogru: string;
-  matematik_yanlis: string;
-  fen_dogru: string;
-  fen_yanlis: string;
-  diploma_notu: string;
-  turk_dili_dogru: string;
-  turk_dili_yanlis: string;
-  tarih_bir_dogru: string;
-  tarih_bir_yanlis: string;
-  cografya_bir_dogru: string;
-  cografya_bir_yanlis: string;
-  tarih_iki_dogru: string;
-  tarih_iki_yanlis: string;
-  cografya_iki_dogru: string;
-  cografya_iki_yanlis: string;
-  felsefe_dogru: string;
-  felsefe_yanlis: string;
-  din_kulturu_dogru: string;
-  din_kulturu_yanlis: string;
-  matematik_ayt_dogru: string;
-  matematik_ayt_yanlis: string;
-  fizik_dogru: string;
-  fizik_yanlis: string;
-  kimya_dogru: string;
-  kimya_yanlis: string;
-  biyoloji_dogru: string;
-  biyoloji_yanlis: string;
-  yabanci_dil_dogru: string;
-  yabanci_dil_yanlis: string;
-};
 export default function TytHesaplayici() {
   const { register, handleSubmit } = useForm<Inputs>({
     defaultValues: {
@@ -89,6 +77,11 @@ export default function TytHesaplayici() {
   const [results, setResults] = useState<{
     ham: number;
     yerlestirme: number;
+    siralamaHam: number;
+    siralamaYerlestirme: number;
+    dilYerlestirme: number;
+    siralamaDil: number;
+    siralamaYDil: number;
     netler: {
       turkce: number;
       sosyal: number;
@@ -98,221 +91,16 @@ export default function TytHesaplayici() {
     dil: number;
     sozel: number;
     sayisal: number;
+    sayisalYerlestirme: number;
+    getSaySiralamaValue: number;
+    getYSaySiralamaValue: number;
     ea: number;
+    eaYerlestirme: number;
+    getEASiralamaValue: number;
+    getYEASiralamaValue: number;
   } | null>(null);
 
-  const toNumber = (val: any) =>
-    parseFloat(String(val).replace(",", ".") || "0");
-  const clamp = (value: number, max: number) =>
-    Math.min(Math.max(value, 0), max);
-  const calculateNet = (dogru: number, yanlis: number) =>
-    Math.max(0, dogru - yanlis / 4);
-
-  const getCalibratedTytScore = ({
-    turkce,
-    sosyal,
-    matematik,
-    fen,
-  }: {
-    turkce: number;
-    sosyal: number;
-    matematik: number;
-    fen: number;
-  }) => {
-    const ham =
-      144.98 +
-      2.908 * turkce +
-      2.937 * sosyal +
-      2.925 * matematik +
-      3.148 * fen;
-    return parseFloat(ham.toFixed(5));
-  };
-
-  const getSozelScore = (
-    tytPuan: number,
-    edebiyatNet: number,
-    tarih1Net: number,
-    cografya1Net: number,
-    tarih2Net: number,
-    cografya2Net: number,
-    felsefeNet: number,
-    dinNet: number
-  ): number => {
-    const puan =
-      0.4236 * tytPuan +
-      3.0633 * edebiyatNet +
-      2.5715 * tarih1Net +
-      2.7439 * cografya1Net +
-      3.16 * tarih2Net +
-      2.8204 * cografya2Net +
-      3.8504 * felsefeNet +
-      3.131 * dinNet +
-      68.9585;
-
-    return parseFloat(puan.toFixed(5));
-  };
-
-  const getSayisalScore = (
-    tytPuan: number,
-    aytMatNet: number,
-    fizikNet: number,
-    kimyaNet: number,
-    biyolojiNet: number
-  ): number => {
-    return parseFloat(
-      (
-        0.38051 * tytPuan +
-        3.18937 * aytMatNet +
-        2.4264 * fizikNet +
-        3.07407 * kimyaNet +
-        2.50925 * biyolojiNet +
-        78.13008
-      ).toFixed(5)
-    );
-  };
-
-  const getDilScore = (tytHam: number, dilNet: number) => {
-    return parseFloat(
-      (tytHam * 0.51415 + dilNet * 2.60942 + 36.05689).toFixed(5)
-    );
-  };
-
-  const getEAScore = (
-    tytPuan: number,
-    aytMatNet: number,
-    edebiyatNet: number,
-    tarih1Net: number,
-    cografya1Net: number
-  ): number => {
-    const score =
-      0.39159 * tytPuan + // TYT katkısı
-      3.28219 * aytMatNet + // AYT Matematik
-      2.83178 * edebiyatNet + // Türk Dili ve Edebiyatı
-      2.37709 * tarih1Net + // Tarih-1
-      2.53652 * cografya1Net + // Coğrafya-1
-      75.52396; // Sabit katkı
-
-    return Math.min(500, parseFloat(score.toFixed(5)));
-  };
-
-  const validateMax = (dogru: number, yanlis: number, max: number) =>
-    clamp(dogru + yanlis, max) === dogru + yanlis;
-
   const onSubmit: SubmitHandler<Inputs> = (data) => {
-    const dersler = [
-      {
-        key: "turkce",
-        name: "Türkçe",
-        d: data.turkce_dogru,
-        y: data.turkce_yanlis,
-        max: 40,
-      },
-      {
-        key: "sosyal",
-        name: "Sosyal",
-        d: data.sosyal_dogru,
-        y: data.sosyal_yanlis,
-        max: 20,
-      },
-      {
-        key: "matematik",
-        name: "Matematik",
-        d: data.matematik_dogru,
-        y: data.matematik_yanlis,
-        max: 40,
-      },
-      {
-        key: "fen",
-        name: "Fen",
-        d: data.fen_dogru,
-        y: data.fen_yanlis,
-        max: 20,
-      },
-      {
-        key: "turk_dili",
-        name: "Türk Dili ve Edebiyatı",
-        d: data.turk_dili_dogru,
-        y: data.turk_dili_yanlis,
-        max: 20,
-      },
-      {
-        key: "tarih_bir",
-        name: "Tarih-1",
-        d: data.tarih_bir_dogru,
-        y: data.tarih_bir_yanlis,
-        max: 20,
-      },
-      {
-        key: "cografya_bir",
-        name: "Coğrafya-1",
-        d: data.cografya_bir_dogru,
-        y: data.cografya_bir_yanlis,
-        max: 20,
-      },
-      {
-        key: "tarih_iki",
-        name: "Tarih-2",
-        d: data.tarih_iki_dogru,
-        y: data.tarih_iki_yanlis,
-        max: 20,
-      },
-      {
-        key: "cografya_iki",
-        name: "Coğrafya-2",
-        d: data.cografya_iki_dogru,
-        y: data.cografya_iki_yanlis,
-        max: 20,
-      },
-      {
-        key: "felsefe",
-        name: "Felsefe",
-        d: data.felsefe_dogru,
-        y: data.felsefe_yanlis,
-        max: 20,
-      },
-      {
-        key: "din_kulturu",
-        name: "Din Külterü ve Ahlak Bilgisi",
-        d: data.din_kulturu_dogru,
-        y: data.din_kulturu_yanlis,
-        max: 20,
-      },
-      {
-        key: "matematik",
-        name: "Matematik AYT",
-        d: data.matematik_ayt_dogru,
-        y: data.matematik_ayt_yanlis,
-        max: 40,
-      },
-      {
-        key: "fizik",
-        name: "Fizik",
-        d: data.fizik_dogru,
-        y: data.fizik_yanlis,
-        max: 20,
-      },
-      {
-        key: "kimya",
-        name: "Kimya",
-        d: data.kimya_dogru,
-        y: data.kimya_yanlis,
-        max: 20,
-      },
-      {
-        key: "biyoloji",
-        name: "biyoloji",
-        d: data.biyoloji_dogru,
-        y: data.biyoloji_yanlis,
-        max: 20,
-      },
-      {
-        key: "yabanci_dil",
-        name: "Yabancı Dil",
-        d: data.yabanci_dil_dogru,
-        y: data.yabanci_dil_yanlis,
-        max: 80,
-      },
-    ];
     if (Object.values(data).every((val) => toNumber(val) === 0)) {
       setError("Lütfen veri giriniz.");
       setIsAlertOpen(true);
@@ -392,11 +180,6 @@ export default function TytHesaplayici() {
       toNumber(data.biyoloji_yanlis)
     );
 
-    const yabanciNet = calculateNet(
-      toNumber(data.yabanci_dil_dogru),
-      toNumber(data.yabanci_dil_yanlis)
-    );
-
     const sozel = getSozelScore(
       ham,
       edebiyatNet,
@@ -408,6 +191,22 @@ export default function TytHesaplayici() {
       dinNet
     );
 
+    const obp = clamp(toNumber(data.diploma_notu), 100);
+    const yerlestirme = ham + obp * 5 * 0.12;
+    const siralamaHam = getHamSiralama(ham);
+    const siralamaYerlestirme = getYtytSiralama(yerlestirme);
+
+    // Yabancı Dil Hesapları
+    const yabanciNet = calculateNet(
+      toNumber(data.yabanci_dil_dogru),
+      toNumber(data.yabanci_dil_yanlis)
+    );
+    const dil = getDilScore(ham, yabanciNet);
+    const dilYerlestirme = getDilYerlestirmeScore(ham, yabanciNet, obp);
+    const siralamaDil = getDilSiralama(dil);
+    const siralamaYDil = getYDilSiralama(dilYerlestirme);
+
+    // Sayısal Hesapları
     const sayisal = getSayisalScore(
       ham,
       matNet,
@@ -415,22 +214,49 @@ export default function TytHesaplayici() {
       kimyaNet,
       biyolojiNet
     );
+    const sayisalYerlestirme = getSayisalYerlestirmeScore(
+      ham,
+      matNet,
+      fizikNet,
+      kimyaNet,
+      biyolojiNet,
+      obp
+    );
+    const getSaySiralamaValue = getSaySiralama(sayisal);
+    const getYSaySiralamaValue = getYSaySiralama(sayisalYerlestirme);
 
-    const dil = getDilScore(ham, yabanciNet);
-
+    //EA Hesapları
     const ea = getEAScore(ham, matNet, edebiyatNet, tarih1Net, cografyaNet);
-
-    const obp = clamp(toNumber(data.diploma_notu), 100);
-    const yerlestirme = ham + obp * 5 * 0.12;
+    const eaYerlestirme = getEAYerlestirmeScore(
+      ham,
+      matNet,
+      edebiyatNet,
+      tarih1Net,
+      cografyaNet,
+      obp
+    );
+    const getEASiralamaValue = getEaSiralama(ea);
+    const getYEASiralamaValue = getYEaSiralama(eaYerlestirme);
 
     setResults({
       ham,
       yerlestirme: parseFloat(yerlestirme.toFixed(5)),
       netler,
       dil,
+      dilYerlestirme,
       sozel,
       sayisal,
+      sayisalYerlestirme,
+      getSaySiralamaValue,
+      getYSaySiralamaValue,
       ea,
+      eaYerlestirme,
+      getEASiralamaValue,
+      getYEASiralamaValue,
+      siralamaHam,
+      siralamaYerlestirme,
+      siralamaDil,
+      siralamaYDil,
     });
     setIsAlertOpen(true);
   };
@@ -530,37 +356,36 @@ export default function TytHesaplayici() {
                 <div className="space-y-3">
                   <div className="flex justify-between">
                     <span>Ham TYT Puanı:</span>
-                    <span className="font-bold text-blue-700">
-                      {results.ham}
-                    </span>
+                    <span>{results.ham}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Yerleştirme TYT Puanı:</span>
-                    <span className="font-bold text-green-700">
-                      {results.yerlestirme}
+                    <span>Ham TYT Sıralaması:</span>
+                    <span>{results.siralamaHam.toLocaleString("tr-TR")}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Y-TYT Puanı:</span>
+                    <span>{results.yerlestirme}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Y-TYT Sıralaması:</span>
+                    <span>
+                      {results.siralamaYerlestirme.toLocaleString("tr-TR")}
                     </span>
                   </div>
-                  Sözel : {results.sozel} <br />
-                  Sayısal : {results.sayisal} <br />
-                  EA : {results.ea}
+                  SÖZ : {results.sozel} <br />
                   <br />
-                  Dil : {results.dil}
-                  <table className="mt-4 w-full text-center border">
-                    <thead className="bg-gray-100">
-                      <tr>
-                        <th className="border px-2 py-1">Ders</th>
-                        <th className="border px-2 py-1">Net</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {Object.entries(results.netler).map(([k, v]) => (
-                        <tr key={k}>
-                          <td className="border px-2 py-1 capitalize">{k}</td>
-                          <td className="border px-2 py-1">{v.toFixed(2)}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                  SAY : {results.sayisal} || {results.getSaySiralamaValue}
+                  <br />
+                  YSAY : {results.sayisalYerlestirme} ||{" "}
+                  {results.getYSaySiralamaValue}
+                  <br /> <br />
+                  EA : {results.ea} || {results.getEASiralamaValue}
+                  <br />
+                  YEA : {results.eaYerlestirme} || {results.getYEASiralamaValue}
+                  <br /> <br />
+                  Dil : {results.dil} || {results.siralamaDil} <br />
+                  YDil : {results.dilYerlestirme} || {results.siralamaYDil}{" "}
+                  <br /> <br />
                 </div>
               ) : null}
             </AlertDialogDescription>
