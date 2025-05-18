@@ -44,7 +44,7 @@ const FooterLinks = () => {
         <Link
           href={x.link}
           key={idx}
-          className={`flex flex-row gap-2 items-center px-4 py-2 text-black bg-gray-200 sm:mx-6 rounded-md hover:bg-[#DF3639] hover:text-white  transition duration-300 ${
+          className={`flex flex-row gap-2 items-center justify-center sm:justify-start px-4 py-2 text-black bg-gray-200 rounded-md hover:bg-[#DF3639] hover:text-white  transition duration-300 text-nowrap whitespace-nowrap w-full text ${
             disabled && "pointer-events-none opacity-30 !cursor-not-allowed"
           }`}
         >
