@@ -24,7 +24,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="tr">
-      <body className="max-w-[90%] mx-auto">{children}</body>
+      <body className="max-w-[90%] mx-auto overflow-x-hidden">{children}</body>
     </html>
   );
 }

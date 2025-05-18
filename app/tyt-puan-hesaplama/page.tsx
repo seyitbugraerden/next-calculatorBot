@@ -105,7 +105,6 @@ export default function TytHesaplayici() {
 
     setResults({ ham, yerlestirme, siralamaHam, siralamaYerlestirme, netler });
     setError("");
-    console.log("results", results);
     setIsAlertOpen(true);
   };
 
@@ -226,14 +225,25 @@ export default function TytHesaplayici() {
             color: "36, 112, 38",
           },
           {
+            item: "LGS Kaç Gün Kaldı?",
+            link: "/lgs-kac-gun-kaldi",
+            color: "25, 80, 148",
+          },
+          {
+            item: "TYT Puan Hesaplayıcı",
+            link: "/tyt-puan-hesaplama",
+            color: "14, 14, 181",
+            disabled: true,
+          },
+          {
             item: "Tyt Kaç Gün Kaldı?",
             link: "/tyt-kac-gun-kaldi",
-            color: "25, 80, 148",
+            color: "134, 14, 181",
           },
           {
             item: "AYT Puan Hesaplayıcı",
             link: "/ayt-puan-hesaplama",
-            color: "179, 87, 27",
+            color: "199, 252, 5",
           },
           {
             item: "AYT Kaç Gün Kaldı?",
@@ -246,7 +256,9 @@ export default function TytHesaplayici() {
             target="_blank"
             key={idx}
             style={{ backgroundColor: `rgba(${x.color},0.2)` }}
-            className={`flex flex-row gap-2 items-center px-4 py-2 text-black sm:mx-6 rounded hover:opacity-50 transition duration-300`}
+            className={`flex flex-row gap-2 items-center px-4 py-2 text-black sm:mx-6 rounded hover:opacity-50 transition duration-300 ${
+              x.disabled && "pointer-events-none opacity-30 !cursor-not-allowed"
+            }`}
           >
             <Image
               src="/book.svg"

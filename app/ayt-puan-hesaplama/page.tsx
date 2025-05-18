@@ -2,15 +2,6 @@
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useState } from "react";
 import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogAction,
-} from "@/components/ui/alert-dialog";
-import {
   calculateNet,
   clamp,
   getCalibratedTytScore,
@@ -32,49 +23,14 @@ import {
   getYSaySiralama,
   getYSozelSiralama,
   getYtytSiralama,
-  splineSayHam,
-  splineSayYerlestirme,
   toNumber,
 } from "../action";
+import Image from "next/image";
+import Link from "next/link";
 
 export default function TytHesaplayici() {
-  const { register, handleSubmit } = useForm<Inputs>({
-    defaultValues: {
-      turkce_dogru: "0",
-      turkce_yanlis: "0",
-      sosyal_dogru: "0",
-      sosyal_yanlis: "0",
-      matematik_dogru: "0",
-      matematik_yanlis: "0",
-      fen_dogru: "0",
-      fen_yanlis: "0",
-      turk_dili_dogru: "0",
-      turk_dili_yanlis: "0",
-      tarih_bir_dogru: "0",
-      tarih_bir_yanlis: "0",
-      cografya_bir_dogru: "0",
-      cografya_bir_yanlis: "0",
-      tarih_iki_dogru: "0",
-      tarih_iki_yanlis: "0",
-      cografya_iki_dogru: "0",
-      cografya_iki_yanlis: "0",
-      felsefe_dogru: "0",
-      felsefe_yanlis: "0",
-      din_kulturu_dogru: "0",
-      din_kulturu_yanlis: "0",
-      matematik_ayt_dogru: "0",
-      matematik_ayt_yanlis: "0",
-      fizik_dogru: "0",
-      fizik_yanlis: "0",
-      kimya_dogru: "0",
-      kimya_yanlis: "0",
-      biyoloji_dogru: "0",
-      biyoloji_yanlis: "0",
-      yabanci_dil_dogru: "0",
-      yabanci_dil_yanlis: "0",
-      diploma_notu: "60",
-    },
-  });
+  const { register, handleSubmit, watch } = useForm();
+  const watchAllFields = watch();
   const [error, setError] = useState("");
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [results, setResults] = useState<{
@@ -106,7 +62,7 @@ export default function TytHesaplayici() {
     getYEASiralamaValue: number;
   } | null>(null);
 
-  const onSubmit: SubmitHandler<Inputs> = (data) => {
+  const onSubmit: SubmitHandler<any> = (data) => {
     if (Object.values(data).every((val) => toNumber(val) === 0)) {
       setError("Lütfen veri giriniz.");
       setIsAlertOpen(true);
@@ -128,8 +84,6 @@ export default function TytHesaplayici() {
       ),
       fen: calculateNet(toNumber(data.fen_dogru), toNumber(data.fen_yanlis)),
     };
-
-    const ham = getCalibratedTytScore(netler);
 
     const edebiyatNet = calculateNet(
       toNumber(data.turk_dili_dogru),
@@ -186,6 +140,7 @@ export default function TytHesaplayici() {
       toNumber(data.biyoloji_yanlis)
     );
 
+    const ham = getCalibratedTytScore(netler);
     const obp = clamp(toNumber(data.diploma_notu), 100);
     const yerlestirme = ham + obp * 5 * 0.12;
     const siralamaHam = getHamSiralama(ham);
@@ -257,7 +212,6 @@ export default function TytHesaplayici() {
     );
     const sozelSiralama = getSozelSiralama(sozel);
     const sozelYerlestirmeSiralama = getYSozelSiralama(sozelYerlestirme);
-
     setResults({
       ham,
       yerlestirme: parseFloat(yerlestirme.toFixed(5)),
@@ -286,146 +240,242 @@ export default function TytHesaplayici() {
 
   return (
     <div className="max-w-xl mx-auto p-6 space-y-6">
-      <h1 className="text-2xl font-bold text-center">
-        TYT Puan Hesaplayıcı (2024 Kalibrasyonlu)
-      </h1>
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        {[
-          "Türkçe",
-          "Sosyal Bilimler",
-          "Temel Matematik",
-          "Fen Bilimleri",
-          "Türk Dili ve Edebiyatı",
-          "Tarih-1",
-          "Coğrafya-1",
-          "Tarih-2",
-          "Coğrafya-2",
-          "Felsefe",
-          "Din Kültürü / Felsefe",
-          "Matematik",
-          "Fizik",
-          "Kimya",
-          "Biyoloji",
-          "Yabancı Dil",
-        ].map((label, idx) => {
-          const key = [
-            { ders: "turkce", max: 40 },
-            { ders: "sosyal", max: 20 },
-            { ders: "matematik", max: 40 },
-            { ders: "fen", max: 20 },
-            { ders: "turk_dili", max: 24 },
-            { ders: "tarih_bir", max: 10 },
-            { ders: "cografya_bir", max: 6 },
-            { ders: "tarih_iki", max: 11 },
-            { ders: "cografya_iki", max: 11 },
-            { ders: "felsefe", max: 12 },
-            { ders: "din_kulturu", max: 6 },
-            { ders: "matematik_ayt", max: 40 },
-            { ders: "fizik", max: 14 },
-            { ders: "kimya", max: 13 },
-            { ders: "biyoloji", max: 13 },
-            { ders: "yabanci_dil", max: 80 },
-          ][idx];
-          const d = `${key.ders}_dogru`;
-          const y = `${key.ders}_yanlis`;
-          const m = key.max;
-          return (
-            <div className="flex gap-4 items-center" key={label}>
-              <span className="w-32">{label}</span>
-              <input
-                type="number"
-                inputMode="decimal"
-                {...register(d as keyof Inputs)}
-                className="border px-2 py-1 w-20"
-              />
-              -
-              <input
-                type="number"
-                inputMode="decimal"
-                {...register(y as keyof Inputs)}
-                className="border px-2 py-1 w-20"
-              />
-              <span>{m} Soru</span>
-            </div>
-          );
-        })}
-        <div className="flex items-center gap-4">
-          <span className="w-32">Diploma Notu</span>
+      <div className="flex flex-row justify-center items-center gap-3">
+        <Image
+          src="/book.png"
+          alt="LGS Puan Hesaplayıcı"
+          width={32}
+          height={32}
+        />
+        <h1 className="text-3xl font-bold mb-2">AYT Puan Hesaplayıcı</h1>
+      </div>
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="bg-gray-200 p-6 rounded-xl shadow space-y-6 mt-12"
+      >
+        <div className="grid sm:grid-cols-2 gap-4">
+          {[
+            { key: "turkce", label: "Türkçe", max: 40 },
+            { key: "sosyal", label: "Sosyal Bilimler", max: 20 },
+            { key: "matematik", label: "Temel Matematik", max: 40 },
+            { key: "fen", label: "Fen Bilgisi", max: 40 },
+            { key: "turk_dili", label: "Türk Dili ve Edebiyatı", max: 24 },
+            { key: "tarih_bir", label: "Tarih-1", max: 10 },
+            { key: "cografya_bir", label: "Coğrafya", max: 6 },
+            { key: "tarih_iki", label: "Tarih-2", max: 11 },
+            { key: "cografya_iki", label: "Coğrafya-2", max: 11 },
+            { key: "felsefe", label: "Felsefe", max: 12 },
+            { key: "din_kulturu", label: "Din Kültürü", max: 6 },
+            { key: "matematik_ayt", label: "Matematik", max: 40 },
+            { key: "fizik", label: "Fizik", max: 14 },
+            { key: "kimya", label: "Kimya", max: 13 },
+            { key: "biyoloji", label: "Biyoloji", max: 13 },
+            { key: "yabanci_dil", label: "Yabancı Dil", max: 80 },
+          ].map((ders, idx) => {
+            const dogruKey = `${ders.key}_dogru`;
+            const yanlisKey = `${ders.key}_yanlis`;
+            const dogru = parseFloat(watchAllFields[dogruKey] || "0");
+            const yanlis = parseFloat(watchAllFields[yanlisKey] || "0");
+            const dogruMax = Math.max(0, ders.max - yanlis);
+            const yanlisMax = Math.max(0, ders.max - dogru);
+            const toplamHatalı = dogru + yanlis > ders.max;
+
+            return (
+              <>
+                <div key={idx} className="text-left">
+                  <label className="block text-sm font-medium mb-1 capitalize">
+                    {ders.label}
+                  </label>
+                  <div className="flex flex-row items-stretch gap-0">
+                    <input
+                      type="number"
+                      {...register(dogruKey)}
+                      placeholder="Doğru"
+                      min={0}
+                      max={dogruMax}
+                      className="w-full sm:w-1/3 border rounded px-2 py-1 text-sm bg-white"
+                    />
+                    <div className="mx-2">-</div>
+                    <input
+                      type="number"
+                      {...register(yanlisKey)}
+                      min={0}
+                      max={yanlisMax}
+                      placeholder="Yanlış"
+                      className="w-full sm:w-1/3 border rounded-l-sm px-2 py-1 text-sm bg-white"
+                    />
+                    <div>
+                      <div className="bg-gray-50 rounded-r-sm text-sm h-full px-2 flex items-center justify-center w-8">
+                        {ders.max}
+                      </div>
+                    </div>
+                  </div>
+                  {toplamHatalı && (
+                    <p className="text-xs text-red-600 mt-1">
+                      Soru sayısından fazla değer girilemez.
+                    </p>
+                  )}
+                </div>
+                {ders.label === "Din Kültürü" && (
+                  <>
+                    <div></div>
+                    <div className="w-full my-6 h-[1px] bg-black col-span-2"></div>
+                  </>
+                )}
+                {ders.label === "Fen Bilgisi" && (
+                  <>
+                    <div className="w-full my-6 h-[1px] bg-black col-span-2"></div>
+                  </>
+                )}{" "}
+                {ders.label === "Biyoloji" && (
+                  <>
+                    <div className="w-full my-6 h-[1px] bg-black col-span-2"></div>
+                  </>
+                )}
+                {ders.label === "Yabancı Dil" && (
+                  <>
+                    <div className="w-full my-6 h-[1px] bg-black col-span-2"></div>
+                  </>
+                )}
+              </>
+            );
+          })}
+        </div>
+        <div className="flex flex-col items-start mt-6">
+          <label className="block text-sm font-medium mb-1 capitalize">
+            Diploma Notu
+          </label>
           <input
             type="number"
-            inputMode="decimal"
             {...register("diploma_notu")}
-            className="border px-2 py-1 w-40"
+            className="w-full border rounded-l-sm px-2 py-1 text-sm bg-white"
+            defaultValue={50}
           />
         </div>
         <button
           type="submit"
-          className="bg-blue-600 text-white px-4 py-2 rounded cursor-pointer"
+          className="w-full py-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 cursor-pointer"
         >
           Hesapla
         </button>
+        {results && (
+          <div className="mt-6 text-left space-y-1">
+            <p className="text-lg font-semibold">
+              Y-TYT Puanı:{" "}
+              <span className="text-green-600">{results.yerlestirme}</span>
+            </p>
+            <p className="text-lg font-semibold">
+              Tahmini Sıralama:{" "}
+              <span className="text-blue-600">
+                {results.siralamaYerlestirme.toLocaleString("tr-TR")}
+              </span>
+            </p>
+            <div className="w-full my-6 h-[1px] bg-black"></div>
+            <p className="text-lg font-semibold">
+              AYT-SAY Puanı:{" "}
+              <span className="text-green-600">
+                {results.sayisalYerlestirme}
+              </span>
+            </p>
+            <p className="text-lg font-semibold">
+              Tahmini Sıralama:{" "}
+              <span className="text-blue-600">
+                {results.getYSaySiralamaValue.toLocaleString("tr-TR")}
+              </span>
+            </p>
+            <div className="w-full my-6 h-[1px] bg-black"></div>
+            <p className="text-lg font-semibold">
+              AYT-SÖZ Puanı:{" "}
+              <span className="text-green-600">{results.sozelYerlestirme}</span>
+            </p>
+            <p className="text-lg font-semibold">
+              Tahmini Sıralama:{" "}
+              <span className="text-blue-600">
+                {results.sozelYerlestirmeSiralama.toLocaleString("tr-TR")}
+              </span>
+            </p>
+            <div className="w-full my-6 h-[1px] bg-black"></div>
+            <p className="text-lg font-semibold">
+              AYT-EA Puanı:{" "}
+              <span className="text-green-600">{results.eaYerlestirme}</span>
+            </p>
+            <p className="text-lg font-semibold">
+              Tahmini Sıralama:{" "}
+              <span className="text-blue-600">
+                {results.getYEASiralamaValue.toLocaleString("tr-TR")}
+              </span>
+            </p>
+            <div className="w-full my-6 h-[1px] bg-black"></div>
+            <p className="text-lg font-semibold">
+              AYT-DİL Puanı:{" "}
+              <span className="text-green-600">{results.dilYerlestirme}</span>
+            </p>
+            <p className="text-lg font-semibold">
+              Tahmini Sıralama:{" "}
+              <span className="text-blue-600">
+                {results.siralamaYDil.toLocaleString("tr-TR")}
+              </span>
+            </p>
+          </div>
+        )}
+        {error && (
+          <p className="text-red-600 font-medium mt-2">Hata: {error}</p>
+        )}
       </form>
-
-      <AlertDialog open={isAlertOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>
-              {error ? "Uyarı" : "Hesaplama Sonuçları"}
-            </AlertDialogTitle>
-            <AlertDialogDescription>
-              {error ? (
-                error
-              ) : results ? (
-                <div className="space-y-3">
-                  <div className="flex justify-between">
-                    <span>Ham TYT Puanı:</span>
-                    <span>{results.ham}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Ham TYT Sıralaması:</span>
-                    <span>{results.siralamaHam.toLocaleString("tr-TR")}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Y-TYT Puanı:</span>
-                    <span>{results.yerlestirme}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Y-TYT Sıralaması:</span>
-                    <span>
-                      {results.siralamaYerlestirme.toLocaleString("tr-TR")}
-                    </span>
-                  </div>
-                  SÖZ : {results.sozel} || {results.sozelSiralama}
-                  <br />
-                  YSÖZ : {results.sozelYerlestirme} ||{" "}
-                  {results.sozelYerlestirmeSiralama}
-                  <br /> <br />
-                  SAY : {results.sayisal} || {results.getSaySiralamaValue}
-                  <br />
-                  YSAY : {results.sayisalYerlestirme} ||{" "}
-                  {results.getYSaySiralamaValue}
-                  <br /> <br />
-                  EA : {results.ea} || {results.getEASiralamaValue}
-                  <br />
-                  YEA : {results.eaYerlestirme} || {results.getYEASiralamaValue}
-                  <br /> <br />
-                  Dil : {results.dil} || {results.siralamaDil} <br />
-                  YDil : {results.dilYerlestirme} || {results.siralamaYDil}{" "}
-                  <br /> <br />
-                </div>
-              ) : null}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogAction
-              onClick={() => setIsAlertOpen(false)}
-              className="cursor-pointer"
-            >
-              Tamam
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <div className="grid sm:grid-cols-2 gap-4 mt-10">
+        {[
+          {
+            item: "LGS Puan Hesaplayıcı",
+            link: "/lgs-puan-hesaplama",
+            color: "36, 112, 38",
+          },
+          {
+            item: "LGS Kaç Gün Kaldı?",
+            link: "/lgs-kac-gun-kaldi",
+            color: "25, 80, 148",
+          },
+          {
+            item: "TYT Puan Hesaplayıcı",
+            link: "/tyt-puan-hesaplama",
+            color: "14, 14, 181",
+          },
+          {
+            item: "TYT Kaç Gün Kaldı?",
+            link: "/tyt-kac-gun-kaldi",
+            color: "134, 14, 181",
+          },
+          {
+            item: "AYT Puan Hesaplayıcı",
+            link: "/ayt-puan-hesaplama",
+            color: "199, 252, 5",
+            disabled: true,
+          },
+          {
+            item: "AYT Kaç Gün Kaldı?",
+            link: "/ayt-kac-gun-kaldi",
+            color: "138, 51, 36",
+          },
+        ].map((x, idx) => (
+          <Link
+            href={x.link}
+            target="_blank"
+            key={idx}
+            style={{ backgroundColor: `rgba(${x.color},0.2)` }}
+            className={`flex flex-row gap-2 items-center px-4 py-2 text-black sm:mx-6 rounded hover:opacity-50 transition duration-300 ${
+              x.disabled && "pointer-events-none opacity-30 !cursor-not-allowed"
+            }`}
+          >
+            <Image
+              src="/book.svg"
+              alt="Book Png"
+              width={24}
+              height={24}
+              style={{ fill: `rgb(${x.color})` }}
+            />
+            <span className="text-sm font-medium">{x.item}</span>
+          </Link>
+        ))}
+      </div>
     </div>
   );
 }
