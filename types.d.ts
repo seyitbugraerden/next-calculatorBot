@@ -41,3 +41,7 @@ type Inputs = {
   yabanci_dil_dogru: string;
   yabanci_dil_yanlis: string;
 };
+
+type ContentProps = {
+  title: string;
+};

@@ -1,3 +1,4 @@
+import FooterLinks from "@/components/footer-links";
 import Link from "next/link";
 import React from "react";
 
@@ -13,17 +14,7 @@ const links = [
 const Page = () => {
   return (
     <div className="w-screen h-screen flex flex-col justify-center items-center space-y-4">
-      <div className="w-1/6 flex flex-col text-center gap-4">
-        {links.map(({ href, label }) => (
-          <Link
-            key={href}
-            href={href}
-            className="px-3 py-2 rounded-xl bg-blue-400 hover:bg-blue-500 transition duration-300 text-white w-full"
-          >
-            {label}
-          </Link>
-        ))}
-      </div>
+      <FooterLinks />
     </div>
   );
 };

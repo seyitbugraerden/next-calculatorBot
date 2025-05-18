@@ -143,3 +143,6 @@ input[type="number"]::-webkit-inner-spin-button {
     @apply bg-background text-foreground;
   }
 }
+body{
+  @apply bg-gradient-to-r from-[#8B7FD1] to-[#5A3385]
+}

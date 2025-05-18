@@ -4,6 +4,8 @@ import { useState } from "react";
 import { getHamSiralama, getYtytSiralama } from "../action";
 import Image from "next/image";
 import Link from "next/link";
+import ContentTitle from "@/components/content-title";
+import FooterLinks from "@/components/footer-links";
 
 export default function TytHesaplayici() {
   const { register, handleSubmit, watch } = useForm();
@@ -109,167 +111,108 @@ export default function TytHesaplayici() {
   };
 
   return (
-    <div className="w-full max-w-xl mx-auto text-center py-10">
-      <div className="flex flex-row justify-center items-center gap-3">
-        <Image
-          src="/book.png"
-          alt="LGS Puan Hesaplayıcı"
-          width={32}
-          height={32}
-        />
-        <h1 className="text-3xl font-bold mb-2">TYT Puan Hesaplayıcı</h1>
-      </div>
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="bg-gray-200 p-6 rounded-xl shadow space-y-6 mt-12"
-      >
-        <div className="grid sm:grid-cols-2 gap-4">
-          {[
-            { key: "turkce", label: "Türkçe", max: 40 },
-            { key: "matematik", label: "Matematik", max: 40 },
-            { key: "sosyal", label: "Sosyal", max: 20 },
-            { key: "fen", label: "Fen", max: 20 },
-          ].map((ders, idx) => {
-            const dogruKey = `${ders.key}_dogru`;
-            const yanlisKey = `${ders.key}_yanlis`;
-            const dogru = parseFloat(watchAllFields[dogruKey] || "0");
-            const yanlis = parseFloat(watchAllFields[yanlisKey] || "0");
-            const dogruMax = Math.max(0, ders.max - yanlis);
-            const yanlisMax = Math.max(0, ders.max - dogru);
-            const toplamHatalı = dogru + yanlis > ders.max;
+    <div className="w-screen h-screen flex justify-center items-center overflow-x-hidden">
+      <div className="w-full max-w-xl mx-auto text-center py-10">
+        <ContentTitle title="TYT Puan Hesaplayıcı" />
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="bg-gray-200 p-6 rounded-xl shadow space-y-6 mt-12"
+        >
+          <div className="grid sm:grid-cols-2 gap-4">
+            {[
+              { key: "turkce", label: "Türkçe", max: 40 },
+              { key: "matematik", label: "Matematik", max: 40 },
+              { key: "sosyal", label: "Sosyal", max: 20 },
+              { key: "fen", label: "Fen", max: 20 },
+            ].map((ders, idx) => {
+              const dogruKey = `${ders.key}_dogru`;
+              const yanlisKey = `${ders.key}_yanlis`;
+              const dogru = parseFloat(watchAllFields[dogruKey] || "0");
+              const yanlis = parseFloat(watchAllFields[yanlisKey] || "0");
+              const dogruMax = Math.max(0, ders.max - yanlis);
+              const yanlisMax = Math.max(0, ders.max - dogru);
+              const toplamHatalı = dogru + yanlis > ders.max;
 
-            return (
-              <div key={idx} className="text-left">
-                <label className="block text-sm font-medium mb-1 capitalize">
-                  {ders.label}
-                </label>
-                <div className="flex flex-row items-stretch gap-0">
-                  <input
-                    type="number"
-                    {...register(dogruKey)}
-                    placeholder="Doğru"
-                    min={0}
-                    max={dogruMax}
-                    className="w-full sm:w-1/3 border rounded px-2 py-1 text-sm bg-white"
-                  />
-                  <div className="mx-2">-</div>
-                  <input
-                    type="number"
-                    {...register(yanlisKey)}
-                    min={0}
-                    max={yanlisMax}
-                    placeholder="Yanlış"
-                    className="w-full sm:w-1/3 border rounded-l-sm px-2 py-1 text-sm bg-white"
-                  />
-                  <div>
-                    <div className="bg-gray-50 rounded-r-sm text-sm h-full px-2 flex items-center justify-center">
-                      {ders.max}
+              return (
+                <div key={idx} className="text-left">
+                  <label className="block text-sm font-medium mb-1 capitalize">
+                    {ders.label}
+                  </label>
+                  <div className="flex flex-row items-stretch gap-0">
+                    <input
+                      type="number"
+                      {...register(dogruKey)}
+                      placeholder="Doğru"
+                      min={0}
+                      max={dogruMax}
+                      className="w-full sm:w-1/3 border rounded px-2 py-1 text-sm bg-white"
+                    />
+                    <div className="mx-2">-</div>
+                    <input
+                      type="number"
+                      {...register(yanlisKey)}
+                      min={0}
+                      max={yanlisMax}
+                      placeholder="Yanlış"
+                      className="w-full sm:w-1/3 border rounded px-2 py-1 text-sm bg-white"
+                    />
+                    <div>
+                      <div className="bg-gray-50 rounded-r-sm text-sm h-full px-2 flex items-center justify-center">
+                        {ders.max}
+                      </div>
                     </div>
                   </div>
+                  {toplamHatalı && (
+                    <p className="text-xs text-red-600 mt-1">
+                      Soru sayısından fazla değer girilemez.
+                    </p>
+                  )}
                 </div>
-                {toplamHatalı && (
-                  <p className="text-xs text-red-600 mt-1">
-                    Soru sayısından fazla değer girilemez.
-                  </p>
-                )}
-              </div>
-            );
-          })}
-        </div>
-        <div className="flex flex-col items-start">
-          <label className="block text-sm font-medium mb-1 capitalize">
-            Diploma Notu
-          </label>
-          <input
-            type="number"
-            {...register("diploma_notu")}
-            className="w-full border rounded-l-sm px-2 py-1 text-sm bg-white"
-            defaultValue={50}
-          />
-        </div>
-        <button
-          type="submit"
-          className="w-full py-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 cursor-pointer"
-        >
-          Hesapla
-        </button>
-        {results !== null && (
-          <div className="mt-6 text-left space-y-1">
-            <p className="text-lg font-semibold">
-              TYT Puanı: <span className="text-green-600">{results.ham}</span>
-            </p>
-            <p className="text-lg font-semibold">
-              Tahmini Sıralama:{" "}
-              <span className="text-blue-600">
-                {results.siralamaHam.toLocaleString("tr-TR")}
-              </span>
-            </p>
-            <p className="text-lg font-semibold">
-              TYT Yerleştirme Puanı:{" "}
-              <span className="text-green-600">{results.yerlestirme}</span>
-            </p>
-            <p className="text-lg font-semibold">
-              Tahmini Yerleştirme Sıralama:{" "}
-              <span className="text-blue-600">
-                {results.siralamaYerlestirme.toLocaleString("tr-TR")}
-              </span>
-            </p>
+              );
+            })}
           </div>
-        )}
-      </form>{" "}
-      <div className="grid sm:grid-cols-2 gap-4 mt-10">
-        {[
-          {
-            item: "LGS Puan Hesaplayıcı",
-            link: "/lgs-puan-hesaplama",
-            color: "36, 112, 38",
-          },
-          {
-            item: "LGS Kaç Gün Kaldı?",
-            link: "/lgs-kac-gun-kaldi",
-            color: "25, 80, 148",
-          },
-          {
-            item: "TYT Puan Hesaplayıcı",
-            link: "/tyt-puan-hesaplama",
-            color: "14, 14, 181",
-            disabled: true,
-          },
-          {
-            item: "Tyt Kaç Gün Kaldı?",
-            link: "/tyt-kac-gun-kaldi",
-            color: "134, 14, 181",
-          },
-          {
-            item: "AYT Puan Hesaplayıcı",
-            link: "/ayt-puan-hesaplama",
-            color: "199, 252, 5",
-          },
-          {
-            item: "AYT Kaç Gün Kaldı?",
-            link: "/ayt-kac-gun-kaldi",
-            color: "138, 51, 36",
-          },
-        ].map((x, idx) => (
-          <Link
-            href={x.link}
-            target="_blank"
-            key={idx}
-            style={{ backgroundColor: `rgba(${x.color},0.2)` }}
-            className={`flex flex-row gap-2 items-center px-4 py-2 text-black sm:mx-6 rounded hover:opacity-50 transition duration-300 ${
-              x.disabled && "pointer-events-none opacity-30 !cursor-not-allowed"
-            }`}
-          >
-            <Image
-              src="/book.svg"
-              alt="Book Png"
-              width={24}
-              height={24}
-              style={{ fill: `rgb(${x.color})` }}
+          <div className="flex flex-col items-start">
+            <label className="block text-sm font-medium mb-1 capitalize">
+              Diploma Notu
+            </label>
+            <input
+              type="number"
+              {...register("diploma_notu")}
+              className="w-full border rounded-l-sm px-2 py-1 text-sm bg-white"
+              defaultValue={50}
             />
-            <span className="text-sm font-medium">{x.item}</span>
-          </Link>
-        ))}
+          </div>
+          <button
+            type="submit"
+            className="w-full py-2 bg-[#FFA33A] text-white font-semibold rounded hover:bg-[#FFA33A]/70 cursor-pointer"
+          >
+            Hesapla
+          </button>
+          {results !== null && (
+            <div className="mt-6 text-left space-y-1">
+              <p className="text-lg font-semibold">
+                TYT Puanı: <span className="text-green-600">{results.ham}</span>
+              </p>
+              <p className="text-lg font-semibold">
+                Tahmini Sıralama:{" "}
+                <span className="text-blue-600">
+                  {results.siralamaHam.toLocaleString("tr-TR")}
+                </span>
+              </p>
+              <p className="text-lg font-semibold">
+                TYT Yerleştirme Puanı:{" "}
+                <span className="text-green-600">{results.yerlestirme}</span>
+              </p>
+              <p className="text-lg font-semibold">
+                Tahmini Yerleştirme Sıralama:{" "}
+                <span className="text-blue-600">
+                  {results.siralamaYerlestirme.toLocaleString("tr-TR")}
+                </span>
+              </p>
+            </div>
+          )}
+        </form>
+        <FooterLinks />
       </div>
     </div>
   );
