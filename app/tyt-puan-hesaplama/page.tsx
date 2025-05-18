@@ -1,31 +1,13 @@
 "use client";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useState } from "react";
-import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogAction,
-} from "@/components/ui/alert-dialog";
 import { getHamSiralama, getYtytSiralama } from "../action";
+import Image from "next/image";
+import Link from "next/link";
 
 export default function TytHesaplayici() {
-  const { register, handleSubmit } = useForm<Inputs>({
-    defaultValues: {
-      turkce_dogru: "0",
-      turkce_yanlis: "0",
-      sosyal_dogru: "0",
-      sosyal_yanlis: "0",
-      matematik_dogru: "0",
-      matematik_yanlis: "0",
-      fen_dogru: "0",
-      fen_yanlis: "0",
-      diploma_notu: "60",
-    },
-  });
+  const { register, handleSubmit, watch } = useForm();
+  const watchAllFields = watch();
 
   const [error, setError] = useState("");
   const [isAlertOpen, setIsAlertOpen] = useState(false);
@@ -58,7 +40,7 @@ export default function TytHesaplayici() {
     return parseFloat(ham.toFixed(5));
   };
 
-  const onSubmit: SubmitHandler<Inputs> = (data) => {
+  const onSubmit: SubmitHandler<any> = (data) => {
     const dersler = [
       {
         key: "turkce",
@@ -123,112 +105,160 @@ export default function TytHesaplayici() {
 
     setResults({ ham, yerlestirme, siralamaHam, siralamaYerlestirme, netler });
     setError("");
+    console.log("results", results);
     setIsAlertOpen(true);
   };
 
   return (
-    <div className="max-w-xl mx-auto p-6 space-y-6">
-      <h1 className="text-2xl font-bold text-center">
-        TYT Puan Hesaplayıcı (Spline Doğrulamalı)
-      </h1>
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        {["Türkçe", "Sosyal Bilimler", "Temel Matematik", "Fen Bilimleri"].map(
-          (label, idx) => {
-            const key = ["turkce", "sosyal", "matematik", "fen"][idx];
-            const d = `${key}_dogru`;
-            const y = `${key}_yanlis`;
-            const m = key === "sosyal" || key === "fen" ? 20 : 40;
+    <div className="w-full max-w-xl mx-auto text-center py-10">
+      <div className="flex flex-row justify-center items-center gap-3">
+        <Image
+          src="/book.png"
+          alt="LGS Puan Hesaplayıcı"
+          width={32}
+          height={32}
+        />
+        <h1 className="text-3xl font-bold mb-2">TYT Puan Hesaplayıcı</h1>
+      </div>
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="bg-gray-200 p-6 rounded-xl shadow space-y-6 mt-12"
+      >
+        <div className="grid sm:grid-cols-2 gap-4">
+          {[
+            { key: "turkce", label: "Türkçe", max: 40 },
+            { key: "matematik", label: "Matematik", max: 40 },
+            { key: "sosyal", label: "Sosyal", max: 20 },
+            { key: "fen", label: "Fen", max: 20 },
+          ].map((ders, idx) => {
+            const dogruKey = `${ders.key}_dogru`;
+            const yanlisKey = `${ders.key}_yanlis`;
+            const dogru = parseFloat(watchAllFields[dogruKey] || "0");
+            const yanlis = parseFloat(watchAllFields[yanlisKey] || "0");
+            const dogruMax = Math.max(0, ders.max - yanlis);
+            const yanlisMax = Math.max(0, ders.max - dogru);
+            const toplamHatalı = dogru + yanlis > ders.max;
+
             return (
-              <div className="flex gap-4 items-center" key={key}>
-                <span className="w-32">{label}</span>
-                <input
-                  type="number"
-                  {...register(d as keyof Inputs)}
-                  className="border px-2 py-1 w-20"
-                />{" "}
-                -
-                <input
-                  type="number"
-                  {...register(y as keyof Inputs)}
-                  className="border px-2 py-1 w-20"
-                />
-                <span>{m} Soru</span>
+              <div key={idx} className="text-left">
+                <label className="block text-sm font-medium mb-1 capitalize">
+                  {ders.label}
+                </label>
+                <div className="flex flex-row items-stretch gap-0">
+                  <input
+                    type="number"
+                    {...register(dogruKey)}
+                    placeholder="Doğru"
+                    min={0}
+                    max={dogruMax}
+                    className="w-full sm:w-1/3 border rounded px-2 py-1 text-sm bg-white"
+                  />
+                  <div className="mx-2">-</div>
+                  <input
+                    type="number"
+                    {...register(yanlisKey)}
+                    min={0}
+                    max={yanlisMax}
+                    placeholder="Yanlış"
+                    className="w-full sm:w-1/3 border rounded-l-sm px-2 py-1 text-sm bg-white"
+                  />
+                  <div>
+                    <div className="bg-gray-50 rounded-r-sm text-sm h-full px-2 flex items-center justify-center">
+                      {ders.max}
+                    </div>
+                  </div>
+                </div>
+                {toplamHatalı && (
+                  <p className="text-xs text-red-600 mt-1">
+                    Soru sayısından fazla değer girilemez.
+                  </p>
+                )}
               </div>
             );
-          }
-        )}
-        <div className="flex gap-4 items-center">
-          <span className="w-32">Diploma Notu</span>
+          })}
+        </div>
+        <div className="flex flex-col items-start">
+          <label className="block text-sm font-medium mb-1 capitalize">
+            Diploma Notu
+          </label>
           <input
             type="number"
             {...register("diploma_notu")}
-            className="border px-2 py-1 w-40"
+            className="w-full border rounded-l-sm px-2 py-1 text-sm bg-white"
+            defaultValue={50}
           />
         </div>
         <button
           type="submit"
-          className="bg-blue-600 text-white px-4 py-2 rounded"
+          className="w-full py-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 cursor-pointer"
         >
           Hesapla
         </button>
-      </form>
-
-      <AlertDialog open={isAlertOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Sonuç</AlertDialogTitle>
-            <AlertDialogDescription>
-              {error ? (
-                <p className="text-red-600 font-medium">{error}</p>
-              ) : (
-                results && (
-                  <div className="space-y-3">
-                    <div className="flex justify-between">
-                      <span>Ham TYT Puanı:</span>
-                      <span>{results.ham}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Ham TYT Sıralaması:</span>
-                      <span>{results.siralamaHam.toLocaleString("tr-TR")}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Y-TYT Puanı:</span>
-                      <span>{results.yerlestirme}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Y-TYT Sıralaması:</span>
-                      <span>
-                        {results.siralamaYerlestirme.toLocaleString("tr-TR")}
-                      </span>
-                    </div>
-                    <table className="w-full mt-4 text-center border">
-                      <thead className="bg-gray-100">
-                        <tr>
-                          <th className="border px-2 py-1">Ders</th>
-                          <th className="border px-2 py-1">Net</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {Object.entries(results.netler).map(([k, v]) => (
-                          <tr key={k}>
-                            <td className="border px-2 py-1 capitalize">{k}</td>
-                            <td className="border px-2 py-1">{v.toFixed(2)}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )
-              )}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogAction onClick={() => setIsAlertOpen(false)}>
-              Tamam
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+        {results !== null && (
+          <div className="mt-6 text-left space-y-1">
+            <p className="text-lg font-semibold">
+              TYT Puanı: <span className="text-green-600">{results.ham}</span>
+            </p>
+            <p className="text-lg font-semibold">
+              Tahmini Sıralama:{" "}
+              <span className="text-blue-600">
+                {results.siralamaHam.toLocaleString("tr-TR")}
+              </span>
+            </p>
+            <p className="text-lg font-semibold">
+              TYT Yerleştirme Puanı:{" "}
+              <span className="text-green-600">{results.yerlestirme}</span>
+            </p>
+            <p className="text-lg font-semibold">
+              Tahmini Yerleştirme Sıralama:{" "}
+              <span className="text-blue-600">
+                {results.siralamaYerlestirme.toLocaleString("tr-TR")}
+              </span>
+            </p>
+          </div>
+        )}
+      </form>{" "}
+      <div className="grid sm:grid-cols-2 gap-4 mt-10">
+        {[
+          {
+            item: "LGS Puan Hesaplayıcı",
+            link: "/lgs-puan-hesaplama",
+            color: "36, 112, 38",
+          },
+          {
+            item: "Tyt Kaç Gün Kaldı?",
+            link: "/tyt-kac-gun-kaldi",
+            color: "25, 80, 148",
+          },
+          {
+            item: "AYT Puan Hesaplayıcı",
+            link: "/ayt-puan-hesaplama",
+            color: "179, 87, 27",
+          },
+          {
+            item: "AYT Kaç Gün Kaldı?",
+            link: "/ayt-kac-gun-kaldi",
+            color: "138, 51, 36",
+          },
+        ].map((x, idx) => (
+          <Link
+            href={x.link}
+            target="_blank"
+            key={idx}
+            style={{ backgroundColor: `rgba(${x.color},0.2)` }}
+            className={`flex flex-row gap-2 items-center px-4 py-2 text-black sm:mx-6 rounded hover:opacity-50 transition duration-300`}
+          >
+            <Image
+              src="/book.svg"
+              alt="Book Png"
+              width={24}
+              height={24}
+              style={{ fill: `rgb(${x.color})` }}
+            />
+            <span className="text-sm font-medium">{x.item}</span>
+          </Link>
+        ))}
+      </div>
     </div>
   );
 }
