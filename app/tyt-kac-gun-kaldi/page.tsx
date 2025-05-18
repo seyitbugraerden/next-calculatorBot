@@ -30,7 +30,7 @@ const CircleProgress = ({
           cx="50%"
           cy="50%"
           r="40%"
-          className="stroke-blue-600 fill-none"
+          className="stroke-[#FFA33A] fill-none"
           strokeWidth="8"
           strokeDasharray={251.2}
           strokeDashoffset={251.2 - (251.2 * getPercentage(value, max)) / 100}
@@ -76,7 +76,7 @@ export default function TytCountdownTimer() {
   }, [targetDate]);
 
   return (
-    <div className="w-screen h-screen flex justify-center items-center overflow-x-hidden">
+    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
       <div className="w-full max-w-xl mx-auto text-center py-10">
         <TimerTitle title="TYT Kaç Gün Kaldı?" />
         <div className="bg-gray-200 p-6 rounded-xl shadow space-y-6 mt-12 py-12">

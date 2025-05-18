@@ -11,6 +11,7 @@ const FooterLinks = () => {
           item: "LGS Puan Hesaplayıcı",
           link: "/lgs-puan-hesaplama",
           color: "36, 112, 38",
+          calculator: true,
         },
         {
           item: "LGS Kaç Gün Kaldı ?",
@@ -21,6 +22,7 @@ const FooterLinks = () => {
           item: "TYT Puan Hesaplayıcı",
           link: "/tyt-puan-hesaplama",
           color: "14, 14, 181",
+          calculator: true,
         },
         {
           item: "TYT Kaç Gün Kaldı ?",
@@ -31,6 +33,7 @@ const FooterLinks = () => {
           item: "AYT Puan Hesaplayıcı",
           link: "/ayt-puan-hesaplama",
           color: "199, 252, 5",
+          calculator: true,
         },
         {
           item: "AYT Kaç Gün Kaldı ?",
@@ -41,19 +44,29 @@ const FooterLinks = () => {
         <Link
           href={x.link}
           key={idx}
-          style={{ backgroundColor: `rgba(${x.color},.6)` }}
-          className={`flex flex-row gap-2 items-center px-4 py-2 text-black sm:mx-6 rounded hover:opacity-50 transition duration-300 ${
+          className={`flex flex-row gap-2 items-center px-4 py-2 text-black bg-gray-200 sm:mx-6 rounded-md hover:opacity-50  transition duration-300 ${
             disabled && "pointer-events-none opacity-30 !cursor-not-allowed"
           }`}
         >
-          <Image
-            src="/book.svg"
-            alt="Book Png"
-            width={24}
-            height={24}
-            style={{ fill: `rgb(${x.color})` }}
-          />
-          <span className="text-sm font-medium text-white">{x.item}</span>
+          {x.calculator && (
+            <Image
+              src="/calculator.png"
+              alt="Calculator Png"
+              width={16}
+              height={16}
+              style={{ fill: `rgb(${x.color})` }}
+            />
+          )}
+          {!x.calculator && (
+            <Image
+              src="/clock.png"
+              alt="Book Png"
+              width={16}
+              height={16}
+              style={{ fill: `rgb(${x.color})` }}
+            />
+          )}
+          <span className="text-sm font-medium">{x.item}</span>
         </Link>
       ))}
     </div>

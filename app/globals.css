@@ -143,6 +143,11 @@ input[type="number"]::-webkit-inner-spin-button {
     @apply bg-background text-foreground;
   }
 }
-body{
-  @apply bg-gradient-to-r from-[#8B7FD1] to-[#5A3385]
+body {
+  background-image: linear-gradient(152deg, #41246d 25%, #df9bac 100%),
+    url("/logo.webp");
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position: center;
+  background-size: cover;
 }

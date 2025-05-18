@@ -239,7 +239,7 @@ export default function TytHesaplayici() {
   };
 
   return (
-    <div className="w-screen h-screen flex justify-center items-start overflow-x-hidden">
+    <div className="absolute left-1/2 -translate-x-1/2">
       <div className="w-full max-w-xl mx-auto text-center py-10">
         <ContentTitle title="AYT Puan Hesaplayıcı" />
         <form
