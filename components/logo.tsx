@@ -6,9 +6,9 @@ const LogoDep = () => {
     <Image
       src="/logo.webp"
       alt="Logo"
-      width={900}
-      height={900}
-      className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full z-[-999] object-contain opacity-10"
+      width={800}
+      height={800}
+      className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] h-[80%] z-[-999] object-contain opacity-10"
     />
   );
 };
