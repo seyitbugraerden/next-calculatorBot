@@ -24,7 +24,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="tr">
-      <body>{children}</body>
+      <body className="max-w-[90%] mx-auto">{children}</body>
     </html>
   );
 }

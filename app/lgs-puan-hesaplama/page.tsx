@@ -1,16 +1,11 @@
+// Bu bileşen, LGS puan hesaplamasını YKS Robotu'ndaki gibi kart yapılı, sade ve net UI formu ile oluşturur
 "use client";
+
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useState } from "react";
 import Spline from "cubic-spline";
-import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogAction,
-} from "@/components/ui/alert-dialog";
+import Image from "next/image";
+import Link from "next/link";
 
 const BASE = 196.617;
 const COEFFICIENTS = {
@@ -54,10 +49,8 @@ const spline = new Spline(x, y);
 const getSiralamaFromPuan = (puan: number): number => {
   const minPuan = x[0];
   const maxPuan = x[x.length - 1];
-
   if (puan >= maxPuan) return 1;
   if (puan <= minPuan) return 887559;
-
   return Math.round(spline.at(puan));
 };
 
@@ -67,215 +60,179 @@ const getYuzdelikFromSira = (sira: number): string => {
   return `%${yuzde.toFixed(2)}`;
 };
 
-type Inputs = {
-  turkce_dogru: string;
-  turkce_yanlis: string;
-  inkilap_dogru: string;
-  inkilap_yanlis: string;
-  din_dogru: string;
-  din_yanlis: string;
-  yabanci_dogru: string;
-  yabanci_yanlis: string;
-  matematik_dogru: string;
-  matematik_yanlis: string;
-  fen_dogru: string;
-  fen_yanlis: string;
-};
-
-export default function LgsHesaplayici() {
-  const { register, handleSubmit } = useForm<Inputs>({
-    defaultValues: {
-      turkce_dogru: "0",
-      turkce_yanlis: "0",
-      inkilap_dogru: "0",
-      inkilap_yanlis: "0",
-      din_dogru: "0",
-      din_yanlis: "0",
-      yabanci_dogru: "0",
-      yabanci_yanlis: "0",
-      matematik_dogru: "0",
-      matematik_yanlis: "0",
-      fen_dogru: "0",
-      fen_yanlis: "0",
-    },
-  });
-
-  const [error, setError] = useState("");
-  const [isAlertOpen, setIsAlertOpen] = useState(false);
-  const [lgsPuan, setLgsPuan] = useState<number | null>(null);
+export default function LgsHeroForm() {
+  const { register, handleSubmit, watch } = useForm();
+  const watchAllFields = watch();
+  const [puan, setPuan] = useState<number | null>(null);
   const [sira, setSira] = useState<number | null>(null);
-  const [netler, setNetler] = useState<Record<string, number> | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  const toNumber = (val: any) =>
-    parseFloat(String(val).replace(",", ".") || "0");
-  const clamp = (value: number, max: number) =>
-    Math.min(Math.max(value, 0), max);
-  const calculateNet = (dogru: number, yanlis: number) =>
-    Math.max(0, dogru - yanlis / 3);
+  const toNet = (d: number, y: number) => Math.max(0, d - y / 3);
 
-  const onSubmit: SubmitHandler<Inputs> = (data) => {
-    const dersler = [
-      {
-        key: "turkce",
-        name: "Türkçe",
-        d: "turkce_dogru",
-        y: "turkce_yanlis",
-        max: 20,
-      },
-      {
-        key: "inkilap",
-        name: "İnkılap",
-        d: "inkilap_dogru",
-        y: "inkilap_yanlis",
-        max: 10,
-      },
-      { key: "din", name: "Din", d: "din_dogru", y: "din_yanlis", max: 10 },
-      {
-        key: "yabanci",
-        name: "Yabancı",
-        d: "yabanci_dogru",
-        y: "yabanci_yanlis",
-        max: 10,
-      },
-      {
-        key: "matematik",
-        name: "Matematik",
-        d: "matematik_dogru",
-        y: "matematik_yanlis",
-        max: 20,
-      },
-      { key: "fen", name: "Fen", d: "fen_dogru", y: "fen_yanlis", max: 20 },
-    ];
-
-    const calculated: Record<string, number> = {};
-
-    for (const ders of dersler) {
-      const dogru = toNumber(data[ders.d as keyof Inputs]);
-      const yanlis = toNumber(data[ders.y as keyof Inputs]);
-      if (clamp(dogru + yanlis, ders.max) !== dogru + yanlis) {
-        setError(
-          `${ders.name} dersi için doğru + yanlış toplamı ${ders.max} geçemez.`
-        );
-        setIsAlertOpen(true);
-        return;
+  const onSubmit: SubmitHandler<any> = (data) => {
+    try {
+      const dersler = [
+        { key: "turkce", max: 20 },
+        { key: "inkilap", max: 10 },
+        { key: "din", max: 10 },
+        { key: "yabanci", max: 10 },
+        { key: "matematik", max: 20 },
+        { key: "fen", max: 20 },
+      ];
+      let toplamPuan = BASE;
+      for (const ders of dersler) {
+        const d = parseFloat(data[`${ders.key}_d`] || "0");
+        const y = parseFloat(data[`${ders.key}_y`] || "0");
+        if (d + y > ders.max) throw new Error(`${ders.key} net toplamı fazla.`);
+        toplamPuan +=
+          toNet(d, y) * COEFFICIENTS[ders.key as keyof typeof COEFFICIENTS];
       }
-      calculated[ders.key] = calculateNet(dogru, yanlis);
+      setPuan(parseFloat(toplamPuan.toFixed(4)));
+      setSira(getSiralamaFromPuan(toplamPuan));
+      setError(null);
+    } catch (e: any) {
+      setError(e.message);
     }
-
-    if (Object.values(calculated).every((n) => n === 0)) {
-      setError("Lütfen en az bir net giriniz.");
-      setIsAlertOpen(true);
-      return;
-    }
-
-    let puan = BASE;
-    for (const key in calculated) {
-      puan += calculated[key] * COEFFICIENTS[key as keyof typeof COEFFICIENTS];
-    }
-
-    const tahminiSira = getSiralamaFromPuan(puan);
-
-    setNetler(calculated);
-    setLgsPuan(parseFloat(puan.toFixed(4)));
-    setSira(tahminiSira);
-    setError("");
-    setIsAlertOpen(true);
   };
 
   return (
-    <div className="max-w-xl mx-auto p-6 space-y-6">
-      <h1 className="text-2xl font-bold text-center">LGS Puan Hesaplayıcı</h1>
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        {["turkce", "inkilap", "din", "yabanci", "matematik", "fen"].map(
-          (label) => {
-            const d = label + "_dogru";
-            const y = label + "_yanlis";
-            const max = ["turkce", "matematik", "fen"].includes(label)
-              ? 20
-              : 10;
+    <div className="w-full max-w-xl mx-auto text-center py-10">
+      <div className="flex flex-row justify-center items-center gap-3">
+        <Image
+          src="/book.png"
+          alt="LGS Puan Hesaplayıcı"
+          width={32}
+          height={32}
+        />
+        <h1 className="text-3xl font-bold mb-2">LGS Puan Hesaplayıcı</h1>
+      </div>
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="bg-gray-200 p-6 rounded-xl shadow space-y-6 mt-12"
+      >
+        <div className="grid sm:grid-cols-2 gap-4">
+          {[
+            { key: "turkce", label: "Türkçe", max: 20 },
+            { key: "matematik", label: "Matematik", max: 20 },
+            { key: "fen", label: "Fen", max: 20 },
+            { key: "inkilap", label: "İnkılap", max: 10 },
+            { key: "din", label: "Din", max: 10 },
+            { key: "yabanci", label: "Yabancı", max: 10 },
+          ].map((ders, idx) => {
+            const dogruKey = `${ders.key}_d`;
+            const yanlisKey = `${ders.key}_y`;
+            const dogru = parseFloat(watchAllFields[dogruKey] || "0");
+            const yanlis = parseFloat(watchAllFields[yanlisKey] || "0");
+            const dogruMax = Math.max(0, ders.max - yanlis);
+            const yanlisMax = Math.max(0, ders.max - dogru);
+            const toplamHatalı = dogru + yanlis > ders.max;
+
             return (
-              <div className="flex gap-4 items-center" key={label}>
-                <span className="w-32 capitalize">{label}</span>
-                <input
-                  type="number"
-                  {...register(d as keyof Inputs)}
-                  className="border px-2 py-1 w-20"
-                />{" "}
-                -
-                <input
-                  type="number"
-                  {...register(y as keyof Inputs)}
-                  className="border px-2 py-1 w-20"
-                />
-                <span>{max} Soru</span>
+              <div key={idx} className="text-left">
+                <label className="block text-sm font-medium mb-1 capitalize">
+                  {ders.label}
+                </label>
+                <div className="flex flex-row items-stretch gap-0">
+                  <input
+                    type="number"
+                    {...register(dogruKey)}
+                    placeholder="Doğru"
+                    min={0}
+                    max={dogruMax}
+                    className="w-full sm:w-1/3 border rounded px-2 py-1 text-sm bg-white"
+                  />
+                  <div className="mx-2">-</div>
+                  <input
+                    type="number"
+                    {...register(yanlisKey)}
+                    min={0}
+                    max={yanlisMax}
+                    placeholder="Yanlış"
+                    className="w-full sm:w-1/3 border rounded-l-sm px-2 py-1 text-sm bg-white"
+                  />
+                  <div>
+                    <div className="bg-gray-50 rounded-r-sm text-sm h-full px-2 flex items-center justify-center">
+                      {ders.max}
+                    </div>
+                  </div>
+                </div>
+                {toplamHatalı && (
+                  <p className="text-xs text-red-600 mt-1">
+                    Soru sayısından fazla değer girilemez.
+                  </p>
+                )}
               </div>
             );
-          }
-        )}
+          })}
+        </div>
         <button
           type="submit"
-          className="bg-blue-600 text-white px-4 py-2 rounded mt-4 cursor-pointer"
+          className="w-full py-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 cursor-pointer"
         >
           Hesapla
         </button>
+        {puan !== null && sira !== null && (
+          <div className="mt-6 text-left space-y-1">
+            <p className="text-lg font-semibold">
+              LGS Puanı: <span className="text-green-600">{puan}</span>
+            </p>
+            <p className="text-lg font-semibold">
+              Tahmini Sıralama:{" "}
+              <span className="text-blue-600">
+                {sira.toLocaleString("tr-TR")}
+              </span>
+            </p>
+            <p className="text-lg font-semibold">
+              Yüzdelik Dilim:{" "}
+              <span className="text-blue-600">{getYuzdelikFromSira(sira)}</span>
+            </p>
+          </div>
+        )}
+        {error && (
+          <p className="text-red-600 font-medium mt-2">Hata: {error}</p>
+        )}
       </form>
-
-      <AlertDialog open={isAlertOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Sonuç</AlertDialogTitle>
-            <AlertDialogDescription>
-              {error ? (
-                <p className="text-red-600 font-medium">{error}</p>
-              ) : (
-                <div className="space-y-4">
-                  <p className="text-lg">
-                    <strong>LGS Puanı:</strong>{" "}
-                    <span className="text-green-700 font-bold">{lgsPuan}</span>
-                  </p>
-                  <p className="text-lg">
-                    <strong>Tahmini Sıralama:</strong>{" "}
-                    <span className="text-blue-700 font-bold">
-                      {sira?.toLocaleString("tr-TR")}
-                    </span>
-                  </p>
-                  <p className="text-lg">
-                    <strong>Yüzdelik Dilim:</strong>{" "}
-                    <span className="text-blue-700 font-bold">
-                      {sira && getYuzdelikFromSira(sira)}
-                    </span>
-                  </p>
-                  <table className="w-full text-center border">
-                    <thead className="bg-gray-100">
-                      <tr>
-                        <th className="border px-2 py-1">Ders</th>
-                        <th className="border px-2 py-1">Net</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {netler &&
-                        Object.entries(netler).map(([k, v]) => (
-                          <tr key={k}>
-                            <td className="border px-2 py-1 capitalize">{k}</td>
-                            <td className="border px-2 py-1">{v.toFixed(2)}</td>
-                          </tr>
-                        ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogAction
-              onClick={() => setIsAlertOpen(false)}
-              className="cursor-pointer"
-            >
-              Tamam
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <div className="grid sm:grid-cols-2 gap-4 mt-10">
+        {[
+          {
+            item: "TYT Puan Hesaplayıcı",
+            link: "/tyt-puan-hesaplama",
+            color: "36, 112, 38",
+          },
+          {
+            item: "Tyt Kaç Gün Kaldı?",
+            link: "/tyt-kac-gun-kaldi",
+            color: "25, 80, 148",
+          },
+          {
+            item: "AYT Puan Hesaplayıcı",
+            link: "/ayt-puan-hesaplama",
+            color: "179, 87, 27",
+          },
+          {
+            item: "AYT Kaç Gün Kaldı?",
+            link: "/ayt-kac-gun-kaldi",
+            color: "138, 51, 36",
+          },
+        ].map((x, idx) => (
+          <Link
+            href={x.link}
+            target="_blank"
+            key={idx}
+            style={{ backgroundColor: `rgba(${x.color},0.2)` }}
+            className={`flex flex-row gap-2 items-center px-4 py-2 text-black sm:mx-6 rounded hover:opacity-50 transition duration-300`}
+          >
+            <Image
+              src="/book.svg"
+              alt="Book Png"
+              width={24}
+              height={24}
+              style={{ fill: `rgb(${x.color})` }}
+            />
+            <span className="text-sm font-medium">{x.item}</span>
+          </Link>
+        ))}
+      </div>
     </div>
   );
 }
