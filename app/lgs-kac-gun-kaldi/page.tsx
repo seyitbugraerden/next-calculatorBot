@@ -1,9 +1,6 @@
 "use client";
-import ContentTitle from "@/components/content-title";
 import FooterLinks from "@/components/footer-links";
 import TimerTitle from "@/components/timer-title";
-import Image from "next/image";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 
 const getPercentage = (value: number, max: number) => (value / max) * 100;
