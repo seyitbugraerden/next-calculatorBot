@@ -162,7 +162,7 @@ export default function LgsHeroForm() {
           </div>
           <button
             type="submit"
-            className="w-full py-2 bg-[#FFA33A] text-white font-semibold rounded hover:bg-[#FFA33A]/70 cursor-pointer"
+            className="w-full py-2 bg-[#DF3639] text-white font-semibold rounded hover:bg-[#DF3639]/70 cursor-pointer"
           >
             Hesapla
           </button>
