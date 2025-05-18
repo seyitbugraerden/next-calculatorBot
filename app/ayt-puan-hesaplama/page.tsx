@@ -239,8 +239,8 @@ export default function TytHesaplayici() {
   };
 
   return (
-    <div className="absolute left-1/2 -translate-x-1/2">
-      <div className="w-full max-w-xl mx-auto text-center py-10">
+    <div className="absolute left-1/2 -translate-x-1/2 w-full">
+      <div className="w-full lg:max-w-xl mx-auto text-center py-10">
         <ContentTitle title="AYT Puan Hesaplayıcı" />
         <form
           onSubmit={handleSubmit(onSubmit)}
@@ -312,22 +312,22 @@ export default function TytHesaplayici() {
                   {ders.label === "Din Kültürü" && (
                     <>
                       <div></div>
-                      <div className="w-full my-6 h-[1px] bg-black col-span-2"></div>
+                      <div className="w-full my-6 h-[1px] bg-black sm:col-span-2"></div>
                     </>
                   )}
                   {ders.label === "Fen Bilgisi" && (
                     <>
-                      <div className="w-full my-6 h-[1px] bg-black col-span-2"></div>
+                      <div className="w-full my-6 h-[1px] bg-black sm:col-span-2"></div>
                     </>
                   )}{" "}
                   {ders.label === "Biyoloji" && (
                     <>
-                      <div className="w-full my-6 h-[1px] bg-black col-span-2"></div>
+                      <div className="w-full my-6 h-[1px] bg-black sm:col-span-2"></div>
                     </>
                   )}
                   {ders.label === "Yabancı Dil" && (
                     <>
-                      <div className="w-full my-6 h-[1px] bg-black col-span-2"></div>
+                      <div className="w-full my-6 h-[1px] bg-black sm:col-span-2"></div>
                     </>
                   )}
                 </>

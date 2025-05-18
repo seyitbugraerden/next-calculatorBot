@@ -111,14 +111,14 @@ export default function TytHesaplayici() {
   };
 
   return (
-    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-      <div className="w-full max-w-xl mx-auto text-center py-10">
+    <div className="absolute lg:top-1/2 left-1/2 -translate-x-1/2 lg:-translate-y-1/2 w-full">
+      <div className="w-full lg:max-w-xl mx-auto text-center py-10">
         <ContentTitle title="TYT Puan Hesaplayıcı" />
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="bg-gray-200 p-6 rounded-xl shadow space-y-6 mt-12"
         >
-          <div className="grid sm:grid-cols-2 gap-4">
+          <div className="grid sm:grid-cols-2 gap-4 w-full">
             {[
               { key: "turkce", label: "Türkçe", max: 40 },
               { key: "matematik", label: "Matematik", max: 40 },
