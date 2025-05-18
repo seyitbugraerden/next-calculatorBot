@@ -15,8 +15,8 @@ const links = [
 const Page = () => {
   return (
     <>
-      <div className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2">
-        <div className="grid grid-cols-1 gap-y-4">
+      <div className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 w-full sm:w-fit">
+        <div className="grid grid-cols-1 gap-y-4 w-full">
           {[
             {
               item: "LGS Puan Hesaplayıcı",
@@ -55,7 +55,7 @@ const Page = () => {
             <Link
               href={x.link}
               key={idx}
-              className={`flex flex-row gap-2 items-center px-4 py-2 text-black bg-gray-200 sm:mx-6 rounded-md hover:bg-[#DF3639] hover:text-white  transition duration-300`}
+              className={`flex flex-row gap-2 items-center justify-center sm:justify-start px-4 py-2 text-black bg-gray-200 sm:mx-6 rounded-md hover:bg-[#DF3639] hover:text-white  transition duration-300 text-nowrap whitespace-nowrap w-full text`}
             >
               {x.calculator && (
                 <Image
