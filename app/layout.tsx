@@ -11,18 +11,8 @@ import { FaYoutube } from "react-icons/fa";
 import { SiInstagram } from "react-icons/si";
 import { TbWorldExclamation } from "react-icons/tb";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
 export const metadata: Metadata = {
-  title: "ODTÜNet | LGS, TYT, AYT, DGT  Puan Hesaplama ve Sınav Geri Sayım",
+  title: "Odtünet | LGS, TYT, AYT, DGT  Puan Hesaplama ve Sınav Geri Sayım",
   description:
     "LGS, TYT, AYT, DGT için doğru ve güncel puan hesaplama araçları, sınav geri sayım sayaçları ve sınava hazırlık kaynakları ODTÜNet Dershanesi'nde sizi bekliyor.",
 };
