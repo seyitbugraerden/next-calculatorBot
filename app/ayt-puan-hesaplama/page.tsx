@@ -240,7 +240,7 @@ export default function TytHesaplayici() {
 
   return (
     <div>
-      <div className="w-full lg:max-w-2xl  mx-auto text-center py-10">
+      <div className="w-screen lg:max-w-2xl mx-auto text-center py-10">
         <ContentTitle title="AYT Puan Hesaplayıcı" />
         <form
           onSubmit={handleSubmit(onSubmit)}

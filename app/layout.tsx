@@ -27,7 +27,9 @@ export default function RootLayout({
   return (
     <html lang="tr">
       <body className="max-w-[90%] mx-auto overflow-x-hidden relative w-screen h-screen">
-        {children}
+        <main className="min-[2000px]:scale-120 min-[2500px]:scale-150 min-[2000px]:origin-top ">
+          {children}
+        </main>
         <LogoDep />
       </body>
     </html>
