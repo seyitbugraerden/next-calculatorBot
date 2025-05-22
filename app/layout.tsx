@@ -83,7 +83,7 @@ export default function RootLayout({
             </div>
           </div>
         </header>
-        <main className="min-[2000px]:scale-120 min-[2500px]:scale-150 min-[2000px]:origin-top max-w-[90%] mx-auto pb-12">
+        <main className="min-[2000px]:scale-120 min-[2500px]:scale-120 min-[2000px]:origin-top max-w-[90%] mx-auto pb-12">
           {children}
         </main>
         <LogoDep />{" "}
