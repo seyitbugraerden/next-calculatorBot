@@ -40,11 +40,22 @@ const FooterLinks = () => {
           link: "/ayt-kac-gun-kaldi",
           color: "138, 51, 36",
         },
+        {
+          item: "DGT Puan Hesaplayıcı",
+          link: "/dgt-puan-hesaplama",
+          color: "199, 252, 5",
+          calculator: true,
+        },
+        {
+          item: "DGT Kaç Gün Kaldı ?",
+          link: "/dgt-kac-gun-kaldi",
+          color: "138, 51, 36",
+        },
       ].map((x, idx) => (
         <Link
           href={x.link}
           key={idx}
-          className={`flex flex-row gap-2 items-center justify-center sm:justify-start px-4 py-2 text-black bg-gray-200 rounded-md hover:bg-[#DF3639] hover:text-white  transition duration-300 text-nowrap whitespace-nowrap w-full text ${
+          className={`flex flex-row gap-2 items-center justify-center sm:justify-start px-4 py-3 text-black bg-gray-200 rounded-md hover:bg-[#DF3639] hover:text-white  transition duration-300 text-nowrap whitespace-nowrap w-full text ${
             disabled && "pointer-events-none opacity-30 !cursor-not-allowed"
           }`}
         >
@@ -66,7 +77,7 @@ const FooterLinks = () => {
               style={{ fill: `rgb(${x.color})` }}
             />
           )}
-          <span className="text-sm font-medium">{x.item}</span>
+          <span className="text-xl font-medium">{x.item}</span>
         </Link>
       ))}
     </div>

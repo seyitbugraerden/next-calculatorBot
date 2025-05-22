@@ -111,8 +111,8 @@ export default function TytHesaplayici() {
   };
 
   return (
-    <div className="absolute lg:top-1/2 left-1/2 -translate-x-1/2 lg:-translate-y-1/2 w-full">
-      <div className="w-full lg:max-w-xl mx-auto text-center py-10">
+    <div>
+      <div className="w-full lg:max-w-2xl mx-auto text-center py-10">
         <ContentTitle title="TYT Puan Hesaplayıcı" />
         <form
           onSubmit={handleSubmit(onSubmit)}
@@ -191,20 +191,21 @@ export default function TytHesaplayici() {
           {results !== null && (
             <div className="mt-6 text-left space-y-1">
               <p className="text-lg font-semibold">
-                TYT Puanı: <span className="text-green-600">{results.ham}</span>
+                2024 - TYT Puanı:{" "}
+                <span className="text-green-600">{results.ham}</span>
               </p>
               <p className="text-lg font-semibold">
-                Tahmini Sıralama:{" "}
+                2024 - TYT Tahmini Sıralama:{" "}
                 <span className="text-blue-600">
                   {results.siralamaHam.toLocaleString("tr-TR")}
                 </span>
-              </p>
+              </p><div className="w-full my-6 h-[1px] bg-black"></div>
               <p className="text-lg font-semibold">
-                TYT Yerleştirme Puanı:{" "}
+                2024 - TYT Yerleştirme Puanı:{" "}
                 <span className="text-green-600">{results.yerlestirme}</span>
               </p>
               <p className="text-lg font-semibold">
-                Tahmini Yerleştirme Sıralama:{" "}
+                2024 - TYT Yerleştirme Sıralama:{" "}
                 <span className="text-blue-600">
                   {results.siralamaYerlestirme.toLocaleString("tr-TR")}
                 </span>

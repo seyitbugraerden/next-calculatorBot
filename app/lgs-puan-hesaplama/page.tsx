@@ -98,8 +98,8 @@ export default function LgsHeroForm() {
   };
 
   return (
-    <div className="absolute lg:top-1/2 left-1/2 -translate-x-1/2 lg:-translate-y-1/2 w-full">
-      <div className="w-full lg:max-w-xl mx-auto text-center py-10">
+    <div>
+      <div className="w-full lg:max-w-2xl mx-auto text-center py-10">
         <ContentTitle title="LGS Puan Hesaplayıcı" />
         <form
           onSubmit={handleSubmit(onSubmit)}
@@ -169,16 +169,16 @@ export default function LgsHeroForm() {
           {puan !== null && sira !== null && (
             <div className="mt-6 text-left space-y-1">
               <p className="text-lg font-semibold">
-                LGS Puanı: <span className="text-green-600">{puan}</span>
+                2024 - LGS Puanı: <span className="text-green-600">{puan}</span>
               </p>
               <p className="text-lg font-semibold">
-                Tahmini Sıralama:{" "}
+                2024 - LGS Tahmini Sıralama:{" "}
                 <span className="text-blue-600">
                   {sira.toLocaleString("tr-TR")}
                 </span>
               </p>
               <p className="text-lg font-semibold">
-                Yüzdelik Dilim:{" "}
+                2024 - LGS Yüzdelik Dilim:{" "}
                 <span className="text-blue-600">
                   {getYuzdelikFromSira(sira)}
                 </span>

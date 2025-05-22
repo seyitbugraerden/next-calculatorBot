@@ -1,6 +1,8 @@
 "use client";
 import FooterLinks from "@/components/footer-links";
 import TimerTitle from "@/components/timer-title";
+import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 const getPercentage = (value: number, max: number) => (value / max) * 100;
@@ -43,7 +45,7 @@ const CircleProgress = ({
 );
 
 export default function TytCountdownTimer() {
-  const targetDate = new Date("2025-06-15T09:30:00"); // TYT sınav tarihi ve saati
+  const targetDate = new Date("2025-06-22T10:15:00"); // TYT sınav tarihi ve saati
 
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
@@ -74,9 +76,9 @@ export default function TytCountdownTimer() {
   }, [targetDate]);
 
   return (
-    <div >
+    <div>
       <div className="w-full lg:max-w-2xl  mx-auto text-center py-10">
-        <TimerTitle title="LGS Kaç Gün Kaldı?" />
+        <TimerTitle title="DGT Kaç Gün Kaldı?" />
         <div className="bg-gray-200 p-6 rounded-xl shadow space-y-6 mt-12 py-12">
           <div className="flex flex-col md:flex-row justify-center gap-4">
             <CircleProgress value={timeLeft.days} max={365} label="Gün" />

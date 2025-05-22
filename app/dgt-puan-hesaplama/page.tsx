@@ -241,7 +241,7 @@ export default function TytHesaplayici() {
   return (
     <div>
       <div className="w-full lg:max-w-2xl  mx-auto text-center py-10">
-        <ContentTitle title="AYT Puan Hesaplayıcı" />
+        <ContentTitle title="DGT Puan Hesaplayıcı" />
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="bg-gray-200 p-6 rounded-xl shadow space-y-6 mt-12"
@@ -252,17 +252,7 @@ export default function TytHesaplayici() {
               { key: "sosyal", label: "Sosyal Bilimler", max: 20 },
               { key: "matematik", label: "Temel Matematik", max: 40 },
               { key: "fen", label: "Fen Bilgisi", max: 40 },
-              { key: "turk_dili", label: "Türk Dili ve Edebiyatı", max: 24 },
-              { key: "tarih_bir", label: "Tarih-1", max: 10 },
-              { key: "cografya_bir", label: "Coğrafya", max: 6 },
-              { key: "tarih_iki", label: "Tarih-2", max: 11 },
-              { key: "cografya_iki", label: "Coğrafya-2", max: 11 },
-              { key: "felsefe", label: "Felsefe", max: 12 },
-              { key: "din_kulturu", label: "Din Kültürü", max: 6 },
-              { key: "matematik_ayt", label: "Matematik", max: 40 },
-              { key: "fizik", label: "Fizik", max: 14 },
-              { key: "kimya", label: "Kimya", max: 13 },
-              { key: "biyoloji", label: "Biyoloji", max: 13 },
+              { key: "yabanci_dil", label: "Yabancı Dil", max: 80 },
             ].map((ders, idx) => {
               const dogruKey = `${ders.key}_dogru`;
               const yanlisKey = `${ders.key}_yanlis`;
@@ -308,18 +298,7 @@ export default function TytHesaplayici() {
                       </p>
                     )}
                   </div>
-                  {ders.label === "Din Kültürü" && (
-                    <>
-                      <div></div>
-                      <div className="w-full my-6 h-[1px] bg-black sm:col-span-2"></div>
-                    </>
-                  )}
                   {ders.label === "Fen Bilgisi" && (
-                    <>
-                      <div className="w-full my-6 h-[1px] bg-black sm:col-span-2"></div>
-                    </>
-                  )}{" "}
-                  {ders.label === "Biyoloji" && (
                     <>
                       <div className="w-full my-6 h-[1px] bg-black sm:col-span-2"></div>
                     </>
@@ -359,39 +338,13 @@ export default function TytHesaplayici() {
               </p>
               <div className="w-full my-6 h-[1px] bg-black"></div>
               <p className="text-lg font-semibold">
-                2024 - SAY Yerleştirme Puanı:{" "}
-                <span className="text-green-600">
-                  {results.sayisalYerlestirme}
-                </span>
+                2024 - DGT Yerleştirme Puanı:{" "}
+                <span className="text-green-600">{results.dilYerlestirme}</span>
               </p>
               <p className="text-lg font-semibold">
-                2024 - SAY Yerleştirme Tahmini Sıralama:{" "}
+                2024 - DGT Yerleştirme Tahmini Sıralama:{" "}
                 <span className="text-blue-600">
-                  {results.getYSaySiralamaValue.toLocaleString("tr-TR")}
-                </span>
-              </p>
-              <div className="w-full my-6 h-[1px] bg-black"></div>
-              <p className="text-lg font-semibold">
-                2024 - SÖZ Yerleştirme Puanı:{" "}
-                <span className="text-green-600">
-                  {results.sozelYerlestirme}
-                </span>
-              </p>
-              <p className="text-lg font-semibold">
-                2024 - SÖZ Yerleştirme Tahmini Sıralama:{" "}
-                <span className="text-blue-600">
-                  {results.sozelYerlestirmeSiralama.toLocaleString("tr-TR")}
-                </span>
-              </p>
-              <div className="w-full my-6 h-[1px] bg-black"></div>
-              <p className="text-lg font-semibold">
-                2024 - EA Yerleştirme Puanı:{" "}
-                <span className="text-green-600">{results.eaYerlestirme}</span>
-              </p>
-              <p className="text-lg font-semibold">
-                2024 - EA Yerleştirme Tahmini Sıralama:{" "}
-                <span className="text-blue-600">
-                  {results.getYEASiralamaValue.toLocaleString("tr-TR")}
+                  {results.siralamaYDil.toLocaleString("tr-TR")}
                 </span>
               </p>
             </div>

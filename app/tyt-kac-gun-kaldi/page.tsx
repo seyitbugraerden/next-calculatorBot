@@ -76,8 +76,8 @@ export default function TytCountdownTimer() {
   }, [targetDate]);
 
   return (
-    <div className="absolute lg:top-1/2 left-1/2 -translate-x-1/2 lg:-translate-y-1/2 w-full">
-      <div className="w-full lg:max-w-xl mx-auto text-center py-10">
+    <div>
+      <div className="w-full lg:max-w-2xl  mx-auto text-center py-10">
         <TimerTitle title="TYT Kaç Gün Kaldı?" />
         <div className="bg-gray-200 p-6 rounded-xl shadow space-y-6 mt-12 py-12">
           <div className="flex flex-col md:flex-row justify-center gap-4">
