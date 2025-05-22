@@ -74,7 +74,7 @@ export default function TytCountdownTimer() {
   }, [targetDate]);
 
   return (
-    <div >
+    <div>
       <div className="w-full lg:max-w-2xl  mx-auto text-center py-10">
         <TimerTitle title="LGS Kaç Gün Kaldı?" />
         <div className="bg-gray-200 p-6 rounded-xl shadow space-y-6 mt-12 py-12">

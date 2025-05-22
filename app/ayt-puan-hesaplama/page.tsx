@@ -31,8 +31,8 @@ import FooterLinks from "@/components/footer-links";
 export default function TytHesaplayici() {
   const { register, handleSubmit, watch } = useForm();
   const watchAllFields = watch();
-  const [error, setError] = useState("");
-  const [isAlertOpen, setIsAlertOpen] = useState(false);
+  const obpWatch = watch("diploma_notu");
+  const [noData, setNoData] = useState<string>();
   const [results, setResults] = useState<{
     ham: number;
     yerlestirme: number;
@@ -63,12 +63,6 @@ export default function TytHesaplayici() {
   } | null>(null);
 
   const onSubmit: SubmitHandler<any> = (data) => {
-    if (Object.values(data).every((val) => toNumber(val) === 0)) {
-      setError("Lütfen veri giriniz.");
-      setIsAlertOpen(true);
-      return;
-    }
-
     const netler = {
       turkce: calculateNet(
         toNumber(data.turkce_dogru),
@@ -139,6 +133,14 @@ export default function TytHesaplayici() {
       toNumber(data.biyoloji_dogru),
       toNumber(data.biyoloji_yanlis)
     );
+
+    const toplamNet = Object.values(netler).reduce((a, b) => a + b, 0);
+    if (toplamNet === 0) {
+      setNoData("Değer");
+      return;
+    } else {
+      setNoData("");
+    }
 
     const ham = getCalibratedTytScore(netler);
     const obp = clamp(toNumber(data.diploma_notu), 100);
@@ -235,7 +237,6 @@ export default function TytHesaplayici() {
       siralamaDil,
       siralamaYDil,
     });
-    setIsAlertOpen(true);
   };
 
   return (
@@ -263,6 +264,7 @@ export default function TytHesaplayici() {
               { key: "fizik", label: "Fizik", max: 14 },
               { key: "kimya", label: "Kimya", max: 13 },
               { key: "biyoloji", label: "Biyoloji", max: 13 },
+              { key: "yabanci_dil", label: "Yabancı Dil", max: 80 },
             ].map((ders, idx) => {
               const dogruKey = `${ders.key}_dogru`;
               const yanlisKey = `${ders.key}_yanlis`;
@@ -323,6 +325,11 @@ export default function TytHesaplayici() {
                     <>
                       <div className="w-full my-6 h-[1px] bg-black sm:col-span-2"></div>
                     </>
+                  )}{" "}
+                  {ders.label === "Yabancı Dil" && (
+                    <>
+                      <div className="w-full my-6 h-[1px] bg-black sm:col-span-2"></div>
+                    </>
                   )}
                 </>
               );
@@ -337,7 +344,13 @@ export default function TytHesaplayici() {
               {...register("diploma_notu")}
               className="w-full border rounded-l-sm px-2 py-1 text-sm bg-white"
               defaultValue={50}
+              max={100}
             />
+            {obpWatch > 100 && (
+              <p className="text-xs text-red-600 mt-1">
+                Diploma Notu 100'den fazla olamaz.
+              </p>
+            )}
           </div>
           <button
             type="submit"
@@ -345,6 +358,11 @@ export default function TytHesaplayici() {
           >
             Hesapla
           </button>
+          {noData && (
+            <p className="text-xs text-red-600 mt-1">
+              Herhangi bir TYT değeri girilmedi.
+            </p>
+          )}
           {results && (
             <div className="mt-6 text-left space-y-1">
               <p className="text-lg font-semibold">
@@ -393,11 +411,19 @@ export default function TytHesaplayici() {
                 <span className="text-blue-600">
                   {results.getYEASiralamaValue.toLocaleString("tr-TR")}
                 </span>
+              </p>{" "}
+              <div className="w-full my-6 h-[1px] bg-black"></div>
+              <p className="text-lg font-semibold">
+                2024 - DGT Yerleştirme Puanı:{" "}
+                <span className="text-green-600">{results.dilYerlestirme}</span>
+              </p>
+              <p className="text-lg font-semibold">
+                2024 - DGT Yerleştirme Tahmini Sıralama:{" "}
+                <span className="text-blue-600">
+                  {results.siralamaYDil.toLocaleString("tr-TR")}
+                </span>
               </p>
             </div>
-          )}
-          {error && (
-            <p className="text-red-600 font-medium mt-2">Hata: {error}</p>
           )}
         </form>
         <FooterLinks />

@@ -4,8 +4,6 @@
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useState } from "react";
 import Spline from "cubic-spline";
-import Image from "next/image";
-import Link from "next/link";
 import ContentTitle from "@/components/content-title";
 import FooterLinks from "@/components/footer-links";
 
@@ -67,7 +65,7 @@ export default function LgsHeroForm() {
   const watchAllFields = watch();
   const [puan, setPuan] = useState<number | null>(null);
   const [sira, setSira] = useState<number | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [noData, setNoData] = useState<string>();
 
   const toNet = (d: number, y: number) => Math.max(0, d - y / 3);
 
@@ -82,6 +80,18 @@ export default function LgsHeroForm() {
         { key: "fen", max: 20 },
       ];
       let toplamPuan = BASE;
+      const toplamDogruYanlis = dersler.reduce((sum, ders) => {
+        const d = parseFloat(data[`${ders.key}_d`] || "0");
+        const y = parseFloat(data[`${ders.key}_y`] || "0");
+        return sum + d + y;
+      }, 0);
+
+      if (toplamDogruYanlis === 0) {
+        setNoData("Lütfen en az bir dersten doğru veya yanlış değeri giriniz.");
+        return;
+      } else {
+        setNoData("");
+      }
       for (const ders of dersler) {
         const d = parseFloat(data[`${ders.key}_d`] || "0");
         const y = parseFloat(data[`${ders.key}_y`] || "0");
@@ -91,9 +101,8 @@ export default function LgsHeroForm() {
       }
       setPuan(parseFloat(toplamPuan.toFixed(4)));
       setSira(getSiralamaFromPuan(toplamPuan));
-      setError(null);
     } catch (e: any) {
-      setError(e.message);
+      console.log(e.message);
     }
   };
 
@@ -165,7 +174,12 @@ export default function LgsHeroForm() {
             className="w-full py-2 bg-[#DF3639] text-white font-semibold rounded hover:bg-[#DF3639]/70 cursor-pointer"
           >
             Hesapla
-          </button>
+          </button>{" "}
+          {noData && (
+            <p className="text-xs text-red-600 mt-1">
+              Herhangi bir değer girilmedi.
+            </p>
+          )}
           {puan !== null && sira !== null && (
             <div className="mt-6 text-left space-y-1">
               <p className="text-lg font-semibold">
@@ -184,9 +198,6 @@ export default function LgsHeroForm() {
                 </span>
               </p>
             </div>
-          )}
-          {error && (
-            <p className="text-red-600 font-medium mt-2">Hata: {error}</p>
           )}
         </form>
         <FooterLinks />

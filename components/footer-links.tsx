@@ -77,7 +77,7 @@ const FooterLinks = () => {
               style={{ fill: `rgb(${x.color})` }}
             />
           )}
-          <span className="text-xl font-medium">{x.item}</span>
+          <span className="text-lg font-medium">{x.item}</span>
         </Link>
       ))}
     </div>

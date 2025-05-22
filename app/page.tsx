@@ -1,22 +1,12 @@
-import FooterLinks from "@/components/footer-links";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
-const links = [
-  { href: "/tyt-kac-gun-kaldi", label: "TYT Kaç Gün Kaldı" },
-  { href: "/ayt-kac-gun-kaldi", label: "AYT Kaç Gün Kaldı" },
-  { href: "/lgs-kac-gun-kaldi", label: "LGS Kaç Gün Kaldı" },
-  { href: "/ayt-puan-hesaplama", label: "AYT Puan Hesaplama" },
-  { href: "/tyt-puan-hesaplama", label: "TYT Puan Hesaplama" },
-  { href: "/lgs-puan-hesaplama", label: "LGS Puan Hesaplama" },
-];
-
 const Page = () => {
   return (
     <>
-      <div className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 w-full sm:w-fit">
-        <div className="grid grid-cols-1 gap-y-4 w-full">
+      <div className="w-full lg:max-w-6xl mx-auto text-center py-10">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 w-full">
           {[
             {
               item: "LGS Puan Hesaplayıcı",
@@ -49,6 +39,17 @@ const Page = () => {
             {
               item: "AYT Kaç Gün Kaldı ?",
               link: "/ayt-kac-gun-kaldi",
+              color: "138, 51, 36",
+            },
+            {
+              item: "DGT Puan Hesaplayıcı",
+              link: "/dgt-puan-hesaplama",
+              color: "199, 252, 5",
+              calculator: true,
+            },
+            {
+              item: "DGT Kaç Gün Kaldı ?",
+              link: "/dgt-kac-gun-kaldi",
               color: "138, 51, 36",
             },
           ].map((x, idx) => (

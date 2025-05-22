@@ -2,17 +2,14 @@
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useState } from "react";
 import { getHamSiralama, getYtytSiralama } from "../action";
-import Image from "next/image";
-import Link from "next/link";
 import ContentTitle from "@/components/content-title";
 import FooterLinks from "@/components/footer-links";
 
 export default function TytHesaplayici() {
   const { register, handleSubmit, watch } = useForm();
   const watchAllFields = watch();
-
-  const [error, setError] = useState("");
-  const [isAlertOpen, setIsAlertOpen] = useState(false);
+  const obpWatch = watch("diploma_notu");
+  const [noData, setNoData] = useState<string>();
   const [results, setResults] = useState<{
     ham: number;
     yerlestirme: number;
@@ -43,45 +40,6 @@ export default function TytHesaplayici() {
   };
 
   const onSubmit: SubmitHandler<any> = (data) => {
-    const dersler = [
-      {
-        key: "turkce",
-        name: "Türkçe",
-        d: data.turkce_dogru,
-        y: data.turkce_yanlis,
-        max: 40,
-      },
-      {
-        key: "sosyal",
-        name: "Sosyal",
-        d: data.sosyal_dogru,
-        y: data.sosyal_yanlis,
-        max: 20,
-      },
-      {
-        key: "matematik",
-        name: "Matematik",
-        d: data.matematik_dogru,
-        y: data.matematik_yanlis,
-        max: 40,
-      },
-      {
-        key: "fen",
-        name: "Fen",
-        d: data.fen_dogru,
-        y: data.fen_yanlis,
-        max: 20,
-      },
-    ];
-
-    for (const { d, y, max, name } of dersler) {
-      if (toNumber(d) + toNumber(y) > max) {
-        setError(`${name} dersi için doğru + yanlış toplamı ${max} geçemez.`);
-        setIsAlertOpen(true);
-        return;
-      }
-    }
-
     const netler: Record<string, number> = {
       turkce: calculateNet(
         toNumber(data.turkce_dogru),
@@ -97,7 +55,13 @@ export default function TytHesaplayici() {
       ),
       fen: calculateNet(toNumber(data.fen_dogru), toNumber(data.fen_yanlis)),
     };
-
+    const toplamNet = Object.values(netler).reduce((a, b) => a + b, 0);
+    if (toplamNet === 0) {
+      setNoData("Değer");
+      return;
+    } else {
+      setNoData("");
+    }
     const obp = clamp(toNumber(data.diploma_notu), 100);
     const ham = getCalibratedTytScore(netler);
     const yerlestirme = parseFloat((ham + obp * 5 * 0.12).toFixed(5));
@@ -106,8 +70,6 @@ export default function TytHesaplayici() {
     const siralamaYerlestirme = getYtytSiralama(yerlestirme);
 
     setResults({ ham, yerlestirme, siralamaHam, siralamaYerlestirme, netler });
-    setError("");
-    setIsAlertOpen(true);
   };
 
   return (
@@ -180,7 +142,13 @@ export default function TytHesaplayici() {
               {...register("diploma_notu")}
               className="w-full border rounded-l-sm px-2 py-1 text-sm bg-white"
               defaultValue={50}
+              max={100}
             />
+            {obpWatch > 100 && (
+              <p className="text-xs text-red-600 mt-1">
+                Diploma Notu 100'den fazla olamaz.
+              </p>
+            )}
           </div>
           <button
             type="submit"
@@ -188,6 +156,11 @@ export default function TytHesaplayici() {
           >
             Hesapla
           </button>
+          {noData && (
+            <p className="text-xs text-red-600 mt-1">
+              Herhangi bir değer girilmedi.
+            </p>
+          )}
           {results !== null && (
             <div className="mt-6 text-left space-y-1">
               <p className="text-lg font-semibold">
@@ -199,7 +172,8 @@ export default function TytHesaplayici() {
                 <span className="text-blue-600">
                   {results.siralamaHam.toLocaleString("tr-TR")}
                 </span>
-              </p><div className="w-full my-6 h-[1px] bg-black"></div>
+              </p>
+              <div className="w-full my-6 h-[1px] bg-black"></div>
               <p className="text-lg font-semibold">
                 2024 - TYT Yerleştirme Puanı:{" "}
                 <span className="text-green-600">{results.yerlestirme}</span>

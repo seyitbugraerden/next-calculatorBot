@@ -31,8 +31,8 @@ import FooterLinks from "@/components/footer-links";
 export default function TytHesaplayici() {
   const { register, handleSubmit, watch } = useForm();
   const watchAllFields = watch();
-  const [error, setError] = useState("");
-  const [isAlertOpen, setIsAlertOpen] = useState(false);
+  const obpWatch = watch("diploma_notu");
+  const [noData, setNoData] = useState<string>();
   const [results, setResults] = useState<{
     ham: number;
     yerlestirme: number;
@@ -63,12 +63,6 @@ export default function TytHesaplayici() {
   } | null>(null);
 
   const onSubmit: SubmitHandler<any> = (data) => {
-    if (Object.values(data).every((val) => toNumber(val) === 0)) {
-      setError("Lütfen veri giriniz.");
-      setIsAlertOpen(true);
-      return;
-    }
-
     const netler = {
       turkce: calculateNet(
         toNumber(data.turkce_dogru),
@@ -139,6 +133,14 @@ export default function TytHesaplayici() {
       toNumber(data.biyoloji_dogru),
       toNumber(data.biyoloji_yanlis)
     );
+
+    const toplamNet = Object.values(netler).reduce((a, b) => a + b, 0);
+    if (toplamNet === 0) {
+      setNoData("Değer");
+      return;
+    } else {
+      setNoData("");
+    }
 
     const ham = getCalibratedTytScore(netler);
     const obp = clamp(toNumber(data.diploma_notu), 100);
@@ -235,7 +237,6 @@ export default function TytHesaplayici() {
       siralamaDil,
       siralamaYDil,
     });
-    setIsAlertOpen(true);
   };
 
   return (
@@ -316,14 +317,25 @@ export default function TytHesaplayici() {
               {...register("diploma_notu")}
               className="w-full border rounded-l-sm px-2 py-1 text-sm bg-white"
               defaultValue={50}
-            />
+              max={100}
+            />{" "}
+            {obpWatch > 100 && (
+              <p className="text-xs text-red-600 mt-1">
+                Diploma Notu 100'den fazla olamaz.
+              </p>
+            )}
           </div>
           <button
             type="submit"
             className="w-full py-2 bg-[#DF3639] text-white font-semibold rounded hover:bg-[#DF3639]/70 cursor-pointer"
           >
             Hesapla
-          </button>
+          </button>{" "}
+          {noData && (
+            <p className="text-xs text-red-600 mt-1">
+              Herhangi bir TYT değeri girilmedi.
+            </p>
+          )}
           {results && (
             <div className="mt-6 text-left space-y-1">
               <p className="text-lg font-semibold">
@@ -348,9 +360,6 @@ export default function TytHesaplayici() {
                 </span>
               </p>
             </div>
-          )}
-          {error && (
-            <p className="text-red-600 font-medium mt-2">Hata: {error}</p>
           )}
         </form>
         <FooterLinks />
