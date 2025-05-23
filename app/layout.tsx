@@ -26,8 +26,8 @@ export default function RootLayout({
     <html lang="tr">
       <body className="overflow-x-hidden relative w-screen h-screen">
         <header className="w-screen bg-[#301A51] text-white px-4 py-2">
-          <div className="max-w-6xl mx-auto flex flex-row justify-between">
-            <div className="flex flex-row gap-5 items-center ">
+          <div className="max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-6 lg:gap-0 justify-between">
+            <div className="flex pt-4 lg:pt-0 flex-col lg:flex-row gap-5 items-center ">
               <Link
                 href="tel:903124198494"
                 target="_blank"
