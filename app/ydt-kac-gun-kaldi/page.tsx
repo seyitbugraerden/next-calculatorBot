@@ -76,7 +76,7 @@ export default function TytCountdownTimer() {
   return (
     <div>
       <div className="w-full lg:max-w-2xl  mx-auto text-center py-10">
-        <TimerTitle title="DGT Kaç Gün Kaldı?" />
+        <TimerTitle title="YDT Kaç Gün Kaldı?" />
         <div className="bg-gray-200 p-6 rounded-xl shadow space-y-6 mt-12 py-12">
           <div className="flex flex-col md:flex-row justify-center gap-4">
             <CircleProgress value={timeLeft.days} max={365} label="Gün" />

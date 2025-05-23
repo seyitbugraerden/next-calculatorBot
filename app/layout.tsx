@@ -12,9 +12,9 @@ import { SiInstagram } from "react-icons/si";
 import { TbWorldExclamation } from "react-icons/tb";
 
 export const metadata: Metadata = {
-  title: "Odtünet | LGS, TYT, AYT, DGT  Puan Hesaplama ve Sınav Geri Sayım",
+  title: "Odtünet | LGS, TYT, AYT, YDT  Puan Hesaplama ve Sınav Geri Sayım",
   description:
-    "LGS, TYT, AYT, DGT için doğru ve güncel puan hesaplama araçları, sınav geri sayım sayaçları ve sınava hazırlık kaynakları ODTÜNet Dershanesi'nde sizi bekliyor.",
+    "LGS, TYT, AYT, YDT için doğru ve güncel puan hesaplama araçları, sınav geri sayım sayaçları ve sınava hazırlık kaynakları ODTÜNet Dershanesi'nde sizi bekliyor.",
 };
 
 export default function RootLayout({

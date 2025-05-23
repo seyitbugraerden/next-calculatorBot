@@ -118,10 +118,10 @@ export default function LgsHeroForm() {
             {[
               { key: "turkce", label: "Türkçe", max: 20 },
               { key: "matematik", label: "Matematik", max: 20 },
-              { key: "fen", label: "Fen", max: 20 },
-              { key: "inkilap", label: "İnkılap", max: 10 },
-              { key: "din", label: "Din", max: 10 },
-              { key: "yabanci", label: "Yabancı", max: 10 },
+              { key: "fen", label: "Fen Bilimleri", max: 20 },
+              { key: "inkilap", label: "T.C. İnk. Tar. ve Atatürk.", max: 10 },
+              { key: "din", label: "Din Kültürü ve Ahlak Bil.", max: 10 },
+              { key: "yabanci", label: "Yabancı Dil", max: 10 },
             ].map((ders, idx) => {
               const dogruKey = `${ders.key}_d`;
               const yanlisKey = `${ders.key}_y`;

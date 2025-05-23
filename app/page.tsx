@@ -42,14 +42,14 @@ const Page = () => {
               color: "138, 51, 36",
             },
             {
-              item: "DGT Puan Hesaplayıcı",
-              link: "/dgt-puan-hesaplama",
+              item: "YDT Puan Hesaplayıcı",
+              link: "/ydt-puan-hesaplama",
               color: "199, 252, 5",
               calculator: true,
             },
             {
-              item: "DGT Kaç Gün Kaldı ?",
-              link: "/dgt-kac-gun-kaldi",
+              item: "YDT Kaç Gün Kaldı ?",
+              link: "/ydt-kac-gun-kaldi",
               color: "138, 51, 36",
             },
           ].map((x, idx) => (

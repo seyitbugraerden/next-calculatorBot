@@ -242,7 +242,7 @@ export default function TytHesaplayici() {
   return (
     <div>
       <div className="w-full lg:max-w-2xl  mx-auto text-center py-10">
-        <ContentTitle title="DGT Puan Hesaplayıcı" />
+        <ContentTitle title="YDT Puan Hesaplayıcı" />
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="bg-gray-200 p-6 rounded-xl shadow space-y-6 mt-12"
@@ -350,11 +350,11 @@ export default function TytHesaplayici() {
               </p>
               <div className="w-full my-6 h-[1px] bg-black"></div>
               <p className="text-lg font-semibold">
-                2024 - DGT Yerleştirme Puanı:{" "}
+                2024 - YDT Yerleştirme Puanı:{" "}
                 <span className="text-green-600">{results.dilYerlestirme}</span>
               </p>
               <p className="text-lg font-semibold">
-                2024 - DGT Yerleştirme Tahmini Sıralama:{" "}
+                2024 - YDT Yerleştirme Tahmini Sıralama:{" "}
                 <span className="text-blue-600">
                   {results.siralamaYDil.toLocaleString("tr-TR")}
                 </span>
