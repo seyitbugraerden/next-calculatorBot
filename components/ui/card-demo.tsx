@@ -6,7 +6,7 @@ import { CiPen } from "react-icons/ci";
 export function CardDemo({ data }: { data: any }) {
   return (
     <Card
-      className="w-full max-w-sm hover:-translate-y-4 transition duration-300 hover:shadow-2xl hover:shadow-black/30 group cursor-pointer"
+      className="w-full lg:max-w-sm hover:-translate-y-4 transition duration-300 hover:shadow-2xl hover:shadow-black/30 group cursor-pointer"
       onClick={() => {
         window.open(data.link, "_blank");
       }}

@@ -15,7 +15,7 @@ const ContentCard = ({
       <h2 className="text-white text-3xl text-center font-bold pt-12">
         {title}
       </h2>
-      <div className="grid grid-cols-4 gap-4 mt-16">
+      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mt-16">
         {data.map((x: any) => {
           return <CardDemo key={x.link} data={x} />;
         })}

@@ -224,5 +224,5 @@ body::before {
 }
 
 .max-w-8xl {
-  @apply max-w-[1340px];
+  max-width: min(1340px, 90%);
 }

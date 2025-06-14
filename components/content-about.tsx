@@ -3,12 +3,12 @@ import React from "react";
 
 const ContentAbout = () => {
   return (
-    <div className="max-w-6xl mx-auto">
+    <div className="max-w-8xl mx-auto">
       <h2 className="text-white text-3xl text-center font-bold pt-12">
         HAKKIMIZDA
       </h2>
-      <div className="grid grid-cols-3 gap-12 text-white pt-16">
-        <div className="col-span-2 place-content-center">
+      <div className="grid lg:grid-cols-3 gap-12 text-white pt-16">
+        <div className="lg:col-span-2 place-content-center">
           <p className="pt-4 text-justify">
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Blanditiis
             doloribus, beatae consequatur sit amet delectus dicta ea tenetur et
