@@ -1,7 +1,7 @@
 "use client";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useState } from "react";
-import { getHamSiralama, getYtytSiralama } from "../action";
+import { getHamSiralama, getYtytSiralama } from "../../action";
 import ContentTitle from "@/components/content-title";
 import FooterLinks from "@/components/footer-links";
 

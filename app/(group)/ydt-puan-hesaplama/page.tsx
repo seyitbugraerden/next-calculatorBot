@@ -24,7 +24,7 @@ import {
   getYSozelSiralama,
   getYtytSiralama,
   toNumber,
-} from "../action";
+} from "../../action";
 import ContentTitle from "@/components/content-title";
 import FooterLinks from "@/components/footer-links";
 

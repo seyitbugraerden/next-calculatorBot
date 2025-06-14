@@ -214,3 +214,15 @@ body::before {
       100% calc(100% + 2px);
   }
 }
+
+.container {
+  @apply min-[2000px]:scale-120 min-[2500px]:scale-120 min-[2000px]:origin-top max-w-[90%] mx-auto pb-24;
+}
+
+.mySwiper img {
+  @apply w-full max-h-[800px];
+}
+
+.max-w-8xl {
+  @apply max-w-[1340px];
+}
