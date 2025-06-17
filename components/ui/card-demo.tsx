@@ -1,5 +1,6 @@
 "use client";
 import { Card, CardContent } from "@/components/ui/card";
+import Image from "next/image";
 import Link from "next/link";
 import { CiPen } from "react-icons/ci";
 
@@ -13,18 +14,31 @@ export function CardDemo({ data }: { data: any }) {
     >
       <CardContent>
         <div className="flex flex-col items-start gap-2">
-          <CiPen size={36} />
-          <Link
-            href={data.link}
-            target="_blank"
-            className="text-xl text-[#003354] font-medium group-hover:text-red-500"
-          >
-            {data.item}
-          </Link>
-          <p className="text-sm leading-6 text-[#444444]">
-            Tüm boya gruplarında ve boya makinelerinde dünyanın en büyük
-            üreticileri ile iş birliği içinde sizlere hizmet veriyoruz.
-          </p>
+          <div className="flex flex-row justify-between w-full gap-3 ">
+            <Link
+              href={data.link}
+              target="_blank"
+              className="text-xl text-[#003354] font-medium group-hover:text-red-500"
+            >
+              {data.item}
+            </Link>{" "}
+            {data.calculator ? (
+              <Image
+                src="/calculator.png"
+                alt="LGS Puan Hesaplayıcı"
+                width={32}
+                height={32}
+              />
+            ) : (
+              <Image
+                src="/clock.png"
+                alt="LGS Puan Hesaplayıcı"
+                width={32}
+                height={32}
+              />
+            )}
+          </div>
+          <p className="text-sm leading-6 text-[#444444]">{data.description}</p>
         </div>
       </CardContent>
     </Card>

@@ -9,41 +9,41 @@ import ContentCard from "@/components/content-card";
 const Page = () => {
   return (
     <>
-      <ImageSlider />
-      <ContentAbout />
+      {/* <ImageSlider /> */}
+      {/* <ContentAbout /> */}
       <ContentCard
         title="PUAN HESAPLAMA"
-        content="orem ipsum dolor, sit amet consectetur adipisicing elit. Repellendus incidunt ex, dicta corporis doloremque eum nisi iusto, deserunt ab, enim dolore. Velit, aliquid possimus! Odio repudiandae nesciunt dolores odit similique hic ex itaque, nihil praesentium incidunt eligendi. Beatae voluptatum cumque iste dolor ut cum itaque id inventore, exercitationem neque pariatur!orem ipsum dolor, sit amet consectetur adipisicing elit. Repellendus incidunt ex, dicta corporis doloremque eum nisi iusto, deserunt ab, enim dolore. Velit, aliquid possimus! Odio repudiandae nesciunt dolores odit similique hic ex itaque, nihil praesentium incidunt eligendi. Beatae voluptatum cumque iste dolor ut cum itaque id inventore, exercitationem neque pariatur!orem ipsum dolor, sit amet consectetur adipisicing elit. Repellendus incidunt ex, dicta corporis doloremque eum nisi iusto, deserunt ab, enim dolore. Velit, aliquid possimus! Odio repudiandae nesciunt dolores odit similique hic ex itaque, nihil praesentium incidunt eligendi. Beatae voluptatum cumque iste dolor ut cum itaque id inventore, exercitationem neque pariatur!orem ipsum dolor, sit amet consectetur adipisicing elit. Repellendus incidunt ex, dicta corporis doloremque eum nisi iusto, deserunt ab, enim dolore. Velit, aliquid possimus! Odio repudiandae nesciunt dolores odit similique hic ex itaque, nihil praesentium incidunt eligendi. Beatae voluptatum cumque iste dolor ut cum itaque id inventore, exercitationem neque pariatur!"
+        content="KIZILAY DERSHANE"
         data={[
           {
             item: "LGS Puan Hesaplayıcı",
             link: "/lgs-puan-hesaplama",
-            color: "36, 112, 38",
+            description: "",
             calculator: true,
           },
           {
             item: "TYT Puan Hesaplayıcı",
             link: "/tyt-puan-hesaplama",
-            color: "14, 14, 181",
+            description: "",
             calculator: true,
           },
           {
             item: "AYT Puan Hesaplayıcı",
             link: "/ayt-puan-hesaplama",
-            color: "199, 252, 5",
+            description: "",
             calculator: true,
           },
           {
             item: "YDT Puan Hesaplayıcı",
             link: "/ydt-puan-hesaplama",
-            color: "199, 252, 5",
+            description: "",
             calculator: true,
           },
         ]}
       />
       <ContentCard
         title="KAÇ GÜN KALDI ?"
-        content="orem ipsum dolor, sit amet consectetur adipisicing elit. Repellendus incidunt ex, dicta corporis doloremque eum nisi iusto, deserunt ab, enim dolore. Velit, aliquid possimus! Odio repudiandae nesciunt dolores odit similique hic ex itaque, nihil praesentium incidunt eligendi. Beatae voluptatum cumque iste dolor ut cum itaque id inventore, exercitationem neque pariatur!orem ipsum dolor, sit amet consectetur adipisicing elit. Repellendus incidunt ex, dicta corporis doloremque eum nisi iusto, deserunt ab, enim dolore. Velit, aliquid possimus! Odio repudiandae nesciunt dolores odit similique hic ex itaque, nihil praesentium incidunt eligendi. Beatae voluptatum cumque iste dolor ut cum itaque id inventore, exercitationem neque pariatur!orem ipsum dolor, sit amet consectetur adipisicing elit. Repellendus incidunt ex, dicta corporis doloremque eum nisi iusto, deserunt ab, enim dolore. Velit, aliquid possimus! Odio repudiandae nesciunt dolores odit similique hic ex itaque, nihil praesentium incidunt eligendi. Beatae voluptatum cumque iste dolor ut cum itaque id inventore, exercitationem neque pariatur!orem ipsum dolor, sit amet consectetur adipisicing elit. Repellendus incidunt ex, dicta corporis doloremque eum nisi iusto, deserunt ab, enim dolore. Velit, aliquid possimus! Odio repudiandae nesciunt dolores odit similique hic ex itaque, nihil praesentium incidunt eligendi. Beatae voluptatum cumque iste dolor ut cum itaque id inventore, exercitationem neque pariatur!orem ipsum dolor, sit amet consectetur adipisicing elit. Repellendus incidunt ex, dicta corporis doloremque eum nisi iusto, deserunt ab, enim dolore. Velit, aliquid possimus! Odio repudiandae nesciunt dolores odit similique hic ex itaque, nihil praesentium incidunt eligendi. Beatae voluptatum cumque iste dolor ut cum itaque id inventore, exercitationem neque pariatur!"
+        content="KIZILAY DERSHANE"
         data={[
           {
             item: "LGS Kaç Gün Kaldı ?",

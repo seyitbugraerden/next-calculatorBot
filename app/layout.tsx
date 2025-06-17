@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import FooterLinks from "@/components/footer-links";
+import { Mulish } from "next/font/google";
 import LogoDep from "@/components/logo";
 import Link from "next/link";
 import { MdLocalPhone } from "react-icons/md";
@@ -10,20 +10,29 @@ import { PiMapPinFill } from "react-icons/pi";
 import { FaYoutube } from "react-icons/fa";
 import { SiInstagram } from "react-icons/si";
 import { TbWorldExclamation } from "react-icons/tb";
+import { seoElements } from "@/lib/seo";
+
+const mulish = Mulish({
+  subsets: ["latin"],
+  weight: ["400", "600", "700"],
+  variable: "--font-mulish",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
-  title: "Odtünet | LGS, TYT, AYT, YDT  Puan Hesaplama ve Sınav Geri Sayım",
-  description:
-    "LGS, TYT, AYT, YDT için doğru ve güncel puan hesaplama araçları, sınav geri sayım sayaçları ve sınava hazırlık kaynakları ODTÜNet Dershanesi'nde sizi bekliyor.",
+  title: seoElements.home.title,
+  description: seoElements.home.description,
+  alternates: {
+    canonical: seoElements.home.cannonical,
+  },
 };
-
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="tr">
+    <html lang="tr" className={mulish.className}>
       <body className="overflow-x-hidden relative w-screen h-screen">
         <header className="w-screen bg-[#301A51] text-white px-4 py-2">
           <div className="max-w-8xl mx-auto flex flex-col lg:flex-row items-center gap-6 lg:gap-0 justify-between">
@@ -44,11 +53,15 @@ export default function RootLayout({
                 <IoMailSharp size={18} className="text-[#DF3639]" />
                 info@odtunet.com
               </Link>{" "}
-              <div className="text-xs flex flex-row gap-2 items-center">
+              <Link
+                href="https://www.google.com/maps/place//data=!4m2!3m1!1s0x14d34fa9c0ff03e5:0x5a1ce5974c25277b?sa=X&ved=1t:8290&ictx=111"
+                target="_blank"
+                className="text-xs flex flex-row gap-2 items-center hover:text-[#DF3639] duration-200"
+              >
                 <PiMapPinFill size={18} className="text-[#DF3639]" />
                 Bulvar Palas İş Merkezi, No:141 / 89 A Blok Kat: 8, Kızılay /
                 Ankara
-              </div>
+              </Link>
             </div>
             <div className="flex flex-row gap-4 items-center">
               <Link

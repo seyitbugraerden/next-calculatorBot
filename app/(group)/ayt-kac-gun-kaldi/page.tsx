@@ -1,6 +1,8 @@
 "use client";
 import FooterLinks from "@/components/footer-links";
 import TimerTitle from "@/components/timer-title";
+import { seoElements } from "@/lib/seo";
+import { Metadata } from "next";
 import { useEffect, useState } from "react";
 
 const getPercentage = (value: number, max: number) => (value / max) * 100;
@@ -90,3 +92,4 @@ export default function TytCountdownTimer() {
     </div>
   );
 }
+

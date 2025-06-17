@@ -27,8 +27,10 @@ import {
 } from "../../action";
 import ContentTitle from "@/components/content-title";
 import FooterLinks from "@/components/footer-links";
+import { Metadata } from "next";
+import { seoElements } from "@/lib/seo";
 
-export default function TytHesaplayici() {
+export default function ydtHesaplayici() {
   const { register, handleSubmit, watch } = useForm();
   const watchAllFields = watch();
   const obpWatch = watch("diploma_notu");
@@ -367,3 +369,4 @@ export default function TytHesaplayici() {
     </div>
   );
 }
+

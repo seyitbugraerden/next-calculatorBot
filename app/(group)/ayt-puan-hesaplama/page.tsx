@@ -27,6 +27,8 @@ import {
 } from "../../action";
 import ContentTitle from "@/components/content-title";
 import FooterLinks from "@/components/footer-links";
+import { Metadata } from "next";
+import { seoElements } from "@/lib/seo";
 
 export default function TytHesaplayici() {
   const { register, handleSubmit, watch } = useForm();
@@ -431,3 +433,4 @@ export default function TytHesaplayici() {
     </div>
   );
 }
+

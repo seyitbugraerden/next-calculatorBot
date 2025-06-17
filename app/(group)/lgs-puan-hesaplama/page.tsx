@@ -6,6 +6,8 @@ import { useState } from "react";
 import Spline from "cubic-spline";
 import ContentTitle from "@/components/content-title";
 import FooterLinks from "@/components/footer-links";
+import { seoElements } from "@/lib/seo";
+import { Metadata } from "next";
 
 const BASE = 196.617;
 const COEFFICIENTS = {
@@ -205,3 +207,4 @@ export default function LgsHeroForm() {
     </div>
   );
 }
+

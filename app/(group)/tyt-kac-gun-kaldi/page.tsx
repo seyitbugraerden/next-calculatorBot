@@ -1,6 +1,8 @@
 "use client";
 import FooterLinks from "@/components/footer-links";
 import TimerTitle from "@/components/timer-title";
+import { seoElements } from "@/lib/seo";
+import { Metadata } from "next";
 import { useEffect, useState } from "react";
 
 const getPercentage = (value: number, max: number) => (value / max) * 100;
@@ -41,7 +43,6 @@ const CircleProgress = ({
     <span className="mt-2 text-sm font-semibold text-gray-700">{label}</span>
   </div>
 );
-
 
 export default function TytCountdownTimer() {
   const targetDate = new Date("2025-06-21T10:15:00"); // TYT sınav tarihi ve saati
@@ -91,3 +92,4 @@ export default function TytCountdownTimer() {
     </div>
   );
 }
+
