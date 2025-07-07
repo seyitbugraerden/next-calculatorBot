@@ -45,7 +45,7 @@ const CircleProgress = ({
 );
 
 export default function TytCountdownTimer() {
-  const targetDate = new Date("2025-06-21T10:15:00"); // TYT sınav tarihi ve saati
+  const targetDate = new Date("2026-06-20T10:15:00"); // TYT sınav tarihi ve saati
 
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
